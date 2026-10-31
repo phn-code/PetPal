@@ -1,4 +1,4 @@
-#include "mini_game.h"
+#include "src/minigames/boxes.h"
 #include "pet_stats.h"
 #include "adult_avo.h"
 #include "avo.h"

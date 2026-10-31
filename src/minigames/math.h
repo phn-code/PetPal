@@ -8,7 +8,6 @@
 #include <iostream>
 #include <vector>
 
-#include "Animation.h"
 
 class math_game {
  private:

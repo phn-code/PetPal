@@ -1,7 +1,43 @@
-#include "MATHGAME.h"
+#include "math.h"
 
 #include <SFML/Audio.hpp>  // Include the Audio module
 #include <SFML/Graphics.hpp>
+
+namespace {
+
+// Steps through one row of a sprite sheet. Unlike the pet animations, leftover
+// time carries into the next frame.
+class Animation {
+ public:
+  Animation(sf::Texture* texture, sf::Vector2u image_count, float switch_time)
+      : image_count(image_count), total_time(0.0f), switch_time(switch_time) {
+    current_image.x = 0;
+    uv_rect.width = texture->getSize().x / float(image_count.x);
+    uv_rect.height = texture->getSize().y / float(image_count.y);
+  }
+
+  void update(int row, float delta_time) {
+    current_image.y = row;
+    total_time += delta_time;
+    if (total_time >= switch_time) {
+      total_time -= switch_time;
+      current_image.x++;
+      if (current_image.x >= image_count.x) current_image.x = 0;
+    }
+    uv_rect.left = current_image.x * uv_rect.width;
+    uv_rect.top = current_image.y * uv_rect.height;
+  }
+
+  sf::IntRect uv_rect;
+
+ private:
+  sf::Vector2u image_count;
+  float total_time;
+  float switch_time;
+  sf::Vector2u current_image;
+};
+
+}  // namespace
 
 // Constructor initializes the game
 math_game::math_game() {

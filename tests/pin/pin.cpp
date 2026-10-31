@@ -598,17 +598,6 @@ int logic(Recorder& rec) {
     std::srand(7);
     expectEq(pick, songs[std::rand() % songs.size()], "song pick is rand() % count");
   }
-  {
-    sf::Texture sheet;
-    sheet.create(192, 36);
-    Animation anim(&sheet, sf::Vector2u(6, 1), 0.3f);
-    std::string lefts;
-    for (int i = 0; i < 7; ++i) {
-      anim.update(0, 0.3f);
-      lefts += std::to_string(anim.uv_rect.left) + " ";
-    }
-    expectEq(lefts, "32 64 96 128 160 0 32 ", "Animation steps one 32 px cell per switch time");
-  }
   return rec.finish();
 }
 

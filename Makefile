@@ -1,20 +1,20 @@
 SFML_PREFIX ?= $(shell brew --prefix sfml@2 2>/dev/null)
 
 CXX ?= c++
-CXXFLAGS ?= -std=c++11
+CXXFLAGS ?= -std=c++17
 SFML_CFLAGS = -I$(SFML_PREFIX)/include
 SFML_LDFLAGS = -L$(SFML_PREFIX)/lib -Wl,-rpath,$(SFML_PREFIX)/lib \
                -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 BUILD = build
 
-SOURCES = buttons.cpp MATHGAME.cpp Animation.cpp mini_game.cpp \
+SOURCES = buttons.cpp src/minigames/math.cpp src/minigames/boxes.cpp \
           pet_stats.cpp AdultAvoWindow.cpp BabyAvoWindow.cpp \
           AdultGhostWindow.cpp BabyGhostWindow.cpp EatingAdultAvo.cpp \
           EatingBabyAvo.cpp EatingAdultGhostWindow.cpp EatingBabyGhost.cpp
-HEADERS = $(wildcard *.h)
+HEADERS = $(wildcard *.h src/*.h src/*/*.h)
 
-UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp mini_game.cpp
+UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp src/minigames/boxes.cpp
 
 # The pin builds production sources with tests/pin/shim.h force-included.
 # tests/pin/pin.cpp includes buttons.cpp itself, with main renamed.

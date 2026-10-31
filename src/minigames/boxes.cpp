@@ -1,4 +1,4 @@
-#include "mini_game.h"
+#include "boxes.h"
 // initialising window
 void mini_game::initialise_window() {
   game_video_mode.height = 1080;
