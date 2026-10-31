@@ -1,0 +1,4 @@
+adult_ghost 90 90 90 45 400
+
+Chicken 1
+Medicine 1

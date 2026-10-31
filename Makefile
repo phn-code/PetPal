@@ -16,7 +16,11 @@ HEADERS = $(wildcard *.h)
 
 UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp mini_game.cpp
 
-.PHONY: all run test clean
+# The pin builds production sources with tests/pin/shim.h force-included.
+# tests/pin/pin.cpp includes buttons.cpp itself, with main renamed.
+PIN_SOURCES = $(filter-out buttons.cpp,$(SOURCES)) tests/pin/pin.cpp
+
+.PHONY: all run test pin pin-update pin-images clean
 
 all: $(BUILD)/Petpal
 
@@ -33,8 +37,27 @@ $(BUILD)/UnitTesting: $(UNIT_SOURCES) $(HEADERS) | $(BUILD)
 run: $(BUILD)/Petpal
 	./$(BUILD)/Petpal
 
+$(BUILD)/pin: $(SOURCES) $(HEADERS) tests/pin/shim.h tests/pin/pin.cpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) -I. -include tests/pin/shim.h $(SFML_CFLAGS) $(PIN_SOURCES) $(SFML_LDFLAGS) -o $@
+
 test: $(BUILD)/UnitTesting
 	./$(BUILD)/UnitTesting
 
+# Characterization pin: the hash of every frame the game draws, compared with
+# tests/golden. A mismatch writes the actual frame to build/pin-out.
+pin: $(BUILD)/pin
+	tests/pin/run.sh
+
+# Rewrite the manifests. Only for intended behavior changes; review the diff of
+# tests/golden and look at changed frames with pin-images.
+pin-update: $(BUILD)/pin
+	PIN_UPDATE=1 tests/pin/run.sh
+
+# Render the frames a commit's goldens stand for: make pin-images REF=<commit>
+pin-images:
+	@test -n "$(REF)" || { echo "usage: make pin-images REF=<commit>"; exit 2; }
+	tests/pin/images.sh $(REF)
+
 clean:
+	-for w in $(BUILD)/ref/*; do git worktree remove --force $$w 2>/dev/null; done
 	rm -rf $(BUILD)

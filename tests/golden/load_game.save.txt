@@ -1,0 +1,2 @@
+adult_ghost 0 0 0 0 42
+
