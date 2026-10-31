@@ -1,6 +1,5 @@
-#include"UnitTesting.h"
-int main(){
+#include "UnitTesting.h"
+int main() {
     UnitTesting UnitTest;
-    UnitTest.runTests();
-    return 0;
+    return UnitTest.runTests() == 0 ? 0 : 1;
 }

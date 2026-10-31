@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+# Build output and the save file the game writes to the working directory
+build/
+pet_stats.txt
+.DS_Store

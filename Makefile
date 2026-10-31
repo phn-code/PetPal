@@ -1,25 +1,40 @@
-# Output file name
-TARGET = Petpal
+SFML_PREFIX ?= $(shell brew --prefix sfml@2 2>/dev/null)
 
-# Source files
+CXX ?= c++
+CXXFLAGS ?= -std=c++11
+SFML_CFLAGS = -I$(SFML_PREFIX)/include
+SFML_LDFLAGS = -L$(SFML_PREFIX)/lib -Wl,-rpath,$(SFML_PREFIX)/lib \
+               -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+BUILD = build
+
 SOURCES = buttons.cpp MATHGAME.cpp Animation.cpp mini_game.cpp \
-           pet_stats.cpp AdultAvoWindow.cpp BabyAvoWindow.cpp \
-           AdultGhostWindow.cpp BabyGhostWindow.cpp EatingAdultAvo.cpp \
-           EatingBabyAvo.cpp EatingAdultGhostWindow.cpp EatingBabyGhost.cpp
+          pet_stats.cpp AdultAvoWindow.cpp BabyAvoWindow.cpp \
+          AdultGhostWindow.cpp BabyGhostWindow.cpp EatingAdultAvo.cpp \
+          EatingBabyAvo.cpp EatingAdultGhostWindow.cpp EatingBabyGhost.cpp
+HEADERS = $(wildcard *.h)
 
-# SFML library paths and flags
-SFML_INCLUDE = -I/opt/homebrew/Cellar/sfml/2.6.1/include
-SFML_LIB = -L/opt/homebrew/Cellar/sfml/2.6.1/lib
-SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp mini_game.cpp
 
-# Compiler and flags
-CXX = g++
-CXXFLAGS = -std=c++11 -arch arm64
+.PHONY: all run test clean
 
-# Build executable
-$(TARGET): $(SOURCES)
-	$(CXX) $(CXXFLAGS) $(SFML_INCLUDE) $(SFML_LIB) $(SOURCES) $(SFML_LIBS) -o $(TARGET)
+all: $(BUILD)/Petpal
 
-# Clean workspace
+$(BUILD):
+	mkdir -p $@
+
+$(BUILD)/Petpal: $(SOURCES) $(HEADERS) | $(BUILD)
+	$(CXX) $(CXXFLAGS) $(SFML_CFLAGS) $(SOURCES) $(SFML_LDFLAGS) -o $@
+
+$(BUILD)/UnitTesting: $(UNIT_SOURCES) $(HEADERS) | $(BUILD)
+	$(CXX) $(CXXFLAGS) $(SFML_CFLAGS) $(UNIT_SOURCES) $(SFML_LDFLAGS) -o $@
+
+# Assets load by relative path, so binaries run from the repo root.
+run: $(BUILD)/Petpal
+	./$(BUILD)/Petpal
+
+test: $(BUILD)/UnitTesting
+	./$(BUILD)/UnitTesting
+
 clean:
-	rm -f $(TARGET) *.o
+	rm -rf $(BUILD)
