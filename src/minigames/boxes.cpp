@@ -10,7 +10,7 @@ void mini_game::initialise_window() {
 }
 
 void mini_game::initialise_image() {
-  mini_game_texture.loadFromFile("character.png");
+  mini_game_texture.loadFromFile("assets/minigames/boxes-character.png");
   slider_knob.setTexture(mini_game_texture);
   slider_knob.setScale(
       98.6f / mini_game_texture.getSize().x,
@@ -34,9 +34,9 @@ void mini_game::initialise_variables() {
   points = 0;
   box_falling_speed = 3.0f;
   money_earned = 0;
-  mini_game_song_paths = {"Music/Call me maybe.mp3", "Music/Cheap Thrills.mp3",
-                          "Music/Counting Stars.mp3",
-                          "Music/Work from Home (feat. Ty Dolla $ign).mp3"};
+  mini_game_song_paths = {"assets/audio/songs/call-me-maybe.mp3", "assets/audio/songs/cheap-thrills.mp3",
+                          "assets/audio/songs/counting-stars.mp3",
+                          "assets/audio/songs/work-from-home.mp3"};
   in_intro_game = true;
   is_game_over_sound_playing = false;
 }
@@ -235,7 +235,7 @@ void mini_game::update_points() {
   }
 }
 void mini_game::initialise_fonts() {
-  if (!game_font.loadFromFile("Regular.ttf")) {
+  if (!game_font.loadFromFile("assets/fonts/Regular.ttf")) {
     cout << "failed to load" << endl;
   }
   game_ui_text.setFont(game_font);
@@ -310,7 +310,7 @@ void mini_game::render_intro_text(sf::RenderTarget& target) {
 }
 void mini_game::initialise_game_over_sound() {
   if (!is_game_over_sound_playing) {
-    game_over_sound.openFromFile("Music/gameOver.mp3");
+    game_over_sound.openFromFile("assets/audio/boxes-game-over.mp3");
     game_over_sound.setVolume(100);
     game_over_sound.play();
     is_game_over_sound_playing = true;

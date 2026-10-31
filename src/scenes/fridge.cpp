@@ -25,7 +25,7 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats) {
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
 
   sf::Texture fridgeTexture;
-  if (!fridgeTexture.loadFromFile("Images/Fridge.png"))
+  if (!fridgeTexture.loadFromFile("assets/ui/fridge.png"))
     std::cerr << "Error: Fridge image not found!" << std::endl;
   sf::Sprite fridge(fridgeTexture);
   fridge.setScale(1920.f / fridgeTexture.getSize().x, 1080.f / fridgeTexture.getSize().y);

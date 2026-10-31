@@ -17,14 +17,14 @@ struct ButtonSpot {
 };
 
 const ButtonSpot kButtons[] = {
-    {Button::Sleep, "moon.png", 40, 130, 150, 150},
-    {Button::Shower, "shower (1).png", 470, 130, 150, 150},
-    {Button::Game, "console.png", 900, 130, 150, 150},
-    {Button::Eat, "cutlery.png", 1310, 130, 150, 150},
-    {Button::Medicine, "first-aid-kit.png", 40, 680, 150, 150},
-    {Button::Shop, "grocery-cart.png", 470, 680, 150, 150},
-    {Button::Info, "info.png", 1310, 680, 150, 150},
-    {Button::Math, "math.png", 900, 680, 150, 150},
+    {Button::Sleep, "assets/ui/moon.png", 40, 130, 150, 150},
+    {Button::Shower, "assets/ui/shower.png", 470, 130, 150, 150},
+    {Button::Game, "assets/ui/console.png", 900, 130, 150, 150},
+    {Button::Eat, "assets/ui/cutlery.png", 1310, 130, 150, 150},
+    {Button::Medicine, "assets/ui/first-aid-kit.png", 40, 680, 150, 150},
+    {Button::Shop, "assets/ui/grocery-cart.png", 470, 680, 150, 150},
+    {Button::Info, "assets/ui/info.png", 1310, 680, 150, 150},
+    {Button::Math, "assets/ui/math.png", 900, 680, 150, 150},
     {Button::Touch, nullptr, 650, 400, 250, 200},
 };
 
@@ -58,7 +58,7 @@ struct HomeArt {
     idle.setTexture(idleTexture);
     idle.setPosition(600, 350);
     idle.setScale(8.f, 8.f);
-    if (!coinTexture.loadFromFile("coin.png")) ok = false;
+    if (!coinTexture.loadFromFile("assets/ui/coin.png")) ok = false;
     return ok;
   }
 

@@ -11,12 +11,12 @@
 
 int main() {
   sf::Font font;
-  if (!font.loadFromFile("Regular.ttf")) {
+  if (!font.loadFromFile("assets/fonts/Regular.ttf")) {
     std::cerr << "Font Not Found" << std::endl;
     return -1;
   }
   sf::Music music;
-  if (!music.openFromFile("main_background_music.mp3")) {
+  if (!music.openFromFile("assets/audio/background.mp3")) {
     std::cerr << "Music file not found" << std::endl;
     return -1;
   }

@@ -5,7 +5,7 @@
 
 const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
   sf::Texture avoTexture, ghostTexture;
-  if (!avoTexture.loadFromFile("avoButton.png") || !ghostTexture.loadFromFile("ghostButton.png")) {
+  if (!avoTexture.loadFromFile("assets/ui/avo-button.png") || !ghostTexture.loadFromFile("assets/ui/ghost-button.png")) {
     std::cerr << "Button Images Not Found" << std::endl;
     return nullptr;
   }

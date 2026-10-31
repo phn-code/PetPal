@@ -3,60 +3,58 @@
 namespace {
 
 const std::vector<Food> kAdultAvoFoods = {
-    {"Steak", 500, "Images/Steak.png"},        {"Fried Rice", 200, "Images/FriedRice.png"},
-    {"Curry Chicken", 200, "Images/Curry.png"}, {"Boba", 150, "Images/Boba.png"},
-    {"Cold Rolls", 180, "Images/ColdRolls.png"}, {"Medicine", 500, "Images/Medicine.png"}};
-const std::vector<Food> kBabyAvoFoods = {{"Baby Pumpkin", 100, "Images/Pumpkin.png"},
-                                         {"Baby Banana", 50, "Images/Banana.png"},
-                                         {"Yakult", 50, "Images/Yakult.png"},
-                                         {"Baby Medicine", 500, "Images/BabyMedicine.png"}};
+    {"Steak", 500, "assets/food/steak.png"},        {"Fried Rice", 200, "assets/food/fried-rice.png"},
+    {"Curry Chicken", 200, "assets/food/curry.png"}, {"Boba", 150, "assets/food/boba.png"},
+    {"Cold Rolls", 180, "assets/food/cold-rolls.png"}, {"Medicine", 500, "assets/food/medicine.png"}};
+const std::vector<Food> kBabyAvoFoods = {{"Baby Pumpkin", 100, "assets/food/pumpkin.png"},
+                                         {"Baby Banana", 50, "assets/food/banana.png"},
+                                         {"Yakult", 50, "assets/food/yakult.png"},
+                                         {"Baby Medicine", 500, "assets/food/medicine.png"}};
 const std::vector<Food> kAdultGhostFoods = {
-    {"Chicken", 100, "Images/Chicken.png"},    {"Milk", 50, "Images/Milk.png"},
-    {"Apple", 50, "Images/Apple.png"},         {"Medicine", 500, "Images/Medicine.png"},
-    {"Pizza", 70, "Images/Pizza.png"},         {"Fish", 70, "Images/Fish.png"}};
-const std::vector<Food> kBabyGhostFoods = {{"Baby Milk", 50, "Images/Milk2.png"},
-                                           {"Baby Porridge", 30, "Images/Porridge.png"},
-                                           {"Yoghurt", 70, "Images/Yoghurt.png"},
-                                           {"Baby Medicine", 500, "Images/BabyMedicine.png"}};
+    {"Chicken", 100, "assets/food/chicken.png"},    {"Milk", 50, "assets/food/milk.png"},
+    {"Apple", 50, "assets/food/apple.png"},         {"Medicine", 500, "assets/food/medicine.png"},
+    {"Pizza", 70, "assets/food/pizza.png"},         {"Fish", 70, "assets/food/fish.png"}};
+const std::vector<Food> kBabyGhostFoods = {{"Baby Milk", 50, "assets/food/milk.png"},
+                                           {"Baby Porridge", 30, "assets/food/porridge.png"},
+                                           {"Yoghurt", 70, "assets/food/yoghurt.png"},
+                                           {"Baby Medicine", 500, "assets/food/medicine.png"}};
 
 // Grid origins are the original windows' centering arithmetic, evaluated.
 const ShopLayout kAdultShop = {"Adult Avo Shopping", {323, 128, 350, 400, 3}, 34, "NOT ENOUGH COINS"};
 const Grid kAdultFridgeGrid = {685, 265, 200, 200, 3};
 
-// Baby sheets are the same size as the adult ones; what differs is the file
-// and, for the avos, how the frames are laid out.
 const PetSpec kPets[] = {
-    {"adult_avo", Species::Avo, Stage::Adult, "bigCharNormalAvo.png",
-     {{"Big2/sleeping/spritesheet.png", 32, 32, 4, 3, 0.8f},
-      {"Big2/showering/spritesheet.png", 32, 32, 5, 5, 1.4f},
+    {"adult_avo", Species::Avo, Stage::Adult, "assets/pets/adult_avo/idle.png",
+     {{"assets/pets/adult_avo/sleep.png", 32, 32, 4, 3, 0.8f},
+      {"assets/pets/adult_avo/shower.png", 32, 32, 5, 5, 1.4f},
       // The sheet is 32 px tall; the game has always sampled 36 and the pin
       // keeps that stretch.
-      {"New Piskel-1 10.15.48ΓÇ»PM.png (2).png", 32, 36, 2, 2, 1.4f},
-      {"Big2/eating/spritesheet.png", 32, 32, 3, 3, 1.4f}},
+      {"assets/pets/adult_avo/medicine.png", 32, 36, 2, 2, 1.4f},
+      {"assets/pets/adult_avo/eat.png", 32, 32, 3, 3, 1.4f}},
      kAdultAvoFoods,
      kAdultShop,
      {"Eating Adult Avo", kAdultFridgeGrid, 15}},
-    {"baby_avo", Species::Avo, Stage::Baby, "smallAvoNormal.png",
-     {{"Small2/Sleeping/spritesheet.png", 32, 32, 3, 3, 0.8f},
-      {"Small2/Showering/spritesheet.png", 32, 32, 5, 5, 0.8f},
-      {"Small2/medications/spritesheet.png", 32, 32, 2, 2, 1.4f},
-      {"Small2/Eating/spritesheet.png", 32, 32, 3, 3, 1.4f}},
+    {"baby_avo", Species::Avo, Stage::Baby, "assets/pets/baby_avo/idle.png",
+     {{"assets/pets/baby_avo/sleep.png", 32, 32, 3, 3, 0.8f},
+      {"assets/pets/baby_avo/shower.png", 32, 32, 5, 5, 0.8f},
+      {"assets/pets/baby_avo/medicine.png", 32, 32, 2, 2, 1.4f},
+      {"assets/pets/baby_avo/eat.png", 32, 32, 3, 3, 1.4f}},
      kBabyAvoFoods,
      {"Baby Avo Shop", {173, 300, 300, 0, 4}, 24, "NOT ENOUGH GOLD"},
      {"Eating Baby Avo", {510, 150, 450, 450, 2}, 15}},
-    {"adult_ghost", Species::Ghost, Stage::Adult, "bigCharNormalGhost.png",
-     {{"Big/Sleeping.png", 36, 36, 2, 3, 0.8f},
-      {"Big/Shower.png", 36, 36, 2, 4, 0.8f},
-      {"Big/Medicine .png", 32, 32, 1, 2, 1.4f},
-      {"Big/eating.png", 32, 32, 2, 3, 1.4f}},
+    {"adult_ghost", Species::Ghost, Stage::Adult, "assets/pets/adult_ghost/idle.png",
+     {{"assets/pets/adult_ghost/sleep.png", 36, 36, 2, 3, 0.8f},
+      {"assets/pets/adult_ghost/shower.png", 36, 36, 2, 4, 0.8f},
+      {"assets/pets/adult_ghost/medicine.png", 32, 32, 1, 2, 1.4f},
+      {"assets/pets/adult_ghost/eat.png", 32, 32, 2, 3, 1.4f}},
      kAdultGhostFoods,
      {"Shopping", kAdultShop.grid, 34, "NOT ENOUGH COINS"},
      {"Eating Ghost Window", kAdultFridgeGrid, 5}},
-    {"baby_ghost", Species::Ghost, Stage::Baby, "smallGhostNormal.png",
-     {{"Small/Sleeping.png", 36, 36, 2, 3, 0.8f},
-      {"Small/Shower.png", 36, 36, 2, 4, 0.8f},
-      {"Small/Medicine .png", 32, 32, 1, 2, 1.4f},
-      {"Small/eating.png", 32, 32, 2, 3, 1.4f}},
+    {"baby_ghost", Species::Ghost, Stage::Baby, "assets/pets/baby_ghost/idle.png",
+     {{"assets/pets/baby_ghost/sleep.png", 36, 36, 2, 3, 0.8f},
+      {"assets/pets/baby_ghost/shower.png", 36, 36, 2, 4, 0.8f},
+      {"assets/pets/baby_ghost/medicine.png", 32, 32, 1, 2, 1.4f},
+      {"assets/pets/baby_ghost/eat.png", 32, 32, 2, 3, 1.4f}},
      kBabyGhostFoods,
      {"Baby Ghost Shopping", {560, 240, 250, 250, 2}, 24, "NOT ENOUGH COINS"},
      {"Eating Baby Ghost", {585, 265, 200, 200, 2}, 15}},
@@ -77,6 +75,6 @@ const PetSpec& findPet(Species species, Stage stage) {
 }
 
 const char* soundPath(Species species) {
-  return species == Species::Avo ? "[Cartoon Sound FX] Avocado sound effect.mp3"
-                                 : "[Cartoon Sound FX] Ghost hover vintage synth effect.mp3";
+  return species == Species::Avo ? "assets/audio/avo.mp3"
+                                 : "assets/audio/ghost.mp3";
 }

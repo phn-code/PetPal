@@ -42,13 +42,13 @@ class Animation {
 // Constructor initializes the game
 math_game::math_game() {
   // Load and play background music
-  math_audio.openFromFile("Lobby Music (Original Soundtrack).mp3");
+  math_audio.openFromFile("assets/audio/math-lobby.mp3");
   math_audio.setVolume(100);
   math_audio.play();
 
   // Load sound effects for correct and incorrect answers
   wrong_audio.openFromFile(
-      "Microsoft Windows XP Error - Sound Effect (HD).mp3");
+      "assets/audio/math-wrong.mp3");
   wrong_audio.setVolume(100);
 
   // Initialize game state variables
@@ -165,7 +165,7 @@ void math_game::render() {
   game_window->clear(
       sf::Color(230, 230, 220));  // Clear the window with a background color
   sf::Font font;
-  if (!font.loadFromFile("dogica.ttf")) {
+  if (!font.loadFromFile("assets/fonts/dogica.ttf")) {
     std::cout << "Error, font not found" << std::endl;  // Error loading font
   }
 
@@ -228,7 +228,7 @@ void math_game::render() {
 void math_game::display_results() {
   game_window->clear(sf::Color(230, 230, 220));  // Clear the window
   sf::Font font;
-  if (!font.loadFromFile("Regular.ttf")) {
+  if (!font.loadFromFile("assets/fonts/Regular.ttf")) {
     std::cout << "Error, font not found" << std::endl;  // Error loading font
   }
 
@@ -265,7 +265,7 @@ void math_game::display_results() {
 // Function to display the intro screen
 void math_game::display_intro() {
   sf::Texture texture_1;
-  texture_1.loadFromFile("New Piskel copy (1).png");  // Load intro texture
+  texture_1.loadFromFile("assets/minigames/math-intro.png");  // Load intro texture
   sf::Sprite sprite;
   sprite.setTexture(texture_1);  // Set sprite texture
   sprite.setPosition(280, 120);
@@ -304,7 +304,7 @@ void math_game::display_intro() {
 void math_game::rules_page() {
   sf::Clock clock;  // Clock for timing
   sf::Font font;
-  if (!font.loadFromFile("Regular.ttf")) {
+  if (!font.loadFromFile("assets/fonts/Regular.ttf")) {
     std::cout << "Error, font not found" << std::endl;  // Error loading font
   }
   while (game_window->isOpen()) {

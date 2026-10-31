@@ -30,8 +30,8 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket) {
   sf::Text noCoinsText = makeText(font, 36, sf::Color::Red, 800, 100);
 
   sf::Texture trolleyTexture;
-  if (!trolleyTexture.loadFromFile("Images/Trolley.png"))
-    std::cerr << "Error: Trolley image not found at Images/Trolley.png" << std::endl;
+  if (!trolleyTexture.loadFromFile("assets/ui/trolley.png"))
+    std::cerr << "Error: Trolley image not found at assets/ui/trolley.png" << std::endl;
   sf::Sprite trolleySprite(trolleyTexture);
   trolleySprite.setPosition(1700, 70);
   trolleySprite.setScale(0.5f, 0.5f);
