@@ -4,9 +4,6 @@
 #include <iostream>
 #include <string>
 
-#include "EatingAdultGhostWindow.h"
-#include "EatingBabyAvo.h"
-#include "EatingBabyGhost.h"
 #include "src/minigames/math.h"
 #include "src/scenes/scenes.h"
 #include "avo.h"
@@ -116,66 +113,7 @@ int main() {
           backgroundMusic.play();
         } else if (x >= 1310 && x <= 1460 && y >= 130 && y <= 280) {
           std::cout << "Eating Button" << std::endl;
-          int current_health=petStats.getHealthLevel();
-          int basketCapacity = 10;
-          int basketSize = 0;
-          ItemList* basket = new ItemList[basketCapacity];
-
-          // Initialize the basket
-          std::vector<std::string> initialItems = {
-              "Steak", "Fried Rice", "Curry Chicken",
-              "Boba",  "Cold Rolls", "Medicine"};
-          std::vector<int> initialPrices = {500, 200, 200, 150, 180, 500};
-          std::vector<int> initialStocks = {5, 5, 5, 5, 5, 5};
-
-          for (size_t i = 0; i < initialItems.size(); ++i) {
-            basket[basketSize].name = initialItems[i];
-            basket[basketSize].price = initialPrices[i];
-            basket[basketSize].stock = initialStocks[i];
-            basket[basketSize].texture = nullptr;
-            basket[basketSize].sprite = sf::Sprite();
-            basket[basketSize].quantityText = sf::Text();
-            basketSize++;
-          }
-
-          int trolleyCount = 0;  // Initialize trolley count
-          if (user_pet == "adult_avo") {
-            // Create an instance of the EatingAdultAvo class
-            EatingAdultAvo eatingWindow(font, basket, basketSize,
-                                        basketCapacity, trolleyCount);
-            eatingWindow.open(petStats);  // Open the eating window
-            delete[] basket;
-          } else if (user_pet == "baby_avo") {
-            EatingBabyAvo eatingWindow(font, basket, basketSize, basketCapacity,
-                                       trolleyCount);
-
-            // Open the window and run the application
-            eatingWindow.open(petStats);
-
-            // Clean up dynamically allocated memory
-            delete[] basket;
-
-          } else if (user_pet == "adult_ghost") {
-            EatingAdultGhostWindow eatingWindow(font, basket, basketSize,
-                                                basketCapacity, trolleyCount);
-
-            // Open the window and run the application
-            eatingWindow.open(petStats);
-
-            // Clean up dynamically allocated memory
-            delete[] basket;
-
-          } else if (user_pet == "baby_ghost") {
-            EatingBabyGhost eatingWindow(font, basket, basketSize,
-                                         basketCapacity, trolleyCount);
-
-            // Open the window and run the application
-            eatingWindow.open(petStats);
-
-            // Clean up dynamically allocated memory
-            delete[] basket;
-          }
-           
+          runFridge(*pet_spec, font, petStats);
           current_pet->animate(*pet_spec, Activity::Eat, main_window, font, selectedQuote, &petStats);
 
         } else if (x >= 40 && x <= 190 && y >= 680 && y <= 830) {

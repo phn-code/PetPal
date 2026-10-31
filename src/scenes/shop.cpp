@@ -20,18 +20,6 @@ FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid) {
   return icons;
 }
 
-namespace {
-
-sf::Text makeText(const sf::Font& font, unsigned size, sf::Color color, float x, float y,
-                  const std::string& text = "") {
-  sf::Text t(text, font, size);
-  t.setFillColor(color);
-  t.setPosition(x, y);
-  return t;
-}
-
-}  // namespace
-
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket) {
   const ShopLayout& layout = pet.shop;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);

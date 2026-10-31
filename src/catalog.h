@@ -40,6 +40,12 @@ struct ShopLayout {
   const char* noCoinsText;
 };
 
+struct FridgeLayout {
+  const char* title;
+  Grid grid;
+  float labelGap;  // between an icon and its "Quantity" line
+};
+
 struct PetSpec {
   const char* name;  // the save-file token, e.g. "adult_avo"
   Species species;
@@ -48,6 +54,7 @@ struct PetSpec {
   Sheet sheets[4];
   std::vector<Food> foods;
   ShopLayout shop;
+  FridgeLayout fridge;
 };
 
 const PetSpec* findPet(const std::string& name);

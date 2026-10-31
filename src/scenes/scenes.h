@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "../catalog.h"
+#include "../../pet_stats.h"
 
 // Food name -> count bought. Written to the save file after every home frame.
 using Basket = std::map<std::string, int>;
@@ -19,5 +20,16 @@ struct FoodIcons {
 };
 FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid);
 
+inline sf::Text makeText(const sf::Font& font, unsigned size, sf::Color color, float x, float y,
+                         const std::string& text = "") {
+  sf::Text t(text, font, size);
+  t.setFillColor(color);
+  t.setPosition(x, y);
+  return t;
+}
+
 // Returns the coins left after shopping.
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket);
+
+// Eating from what the save file says was bought. Feeding fills hunger.
+void runFridge(const PetSpec& pet, sf::Font& font, PetStats& stats);

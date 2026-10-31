@@ -21,6 +21,7 @@ const std::vector<Food> kBabyGhostFoods = {{"Baby Milk", 50, "Images/Milk2.png"}
 
 // Grid origins are the original windows' centering arithmetic, evaluated.
 const ShopLayout kAdultShop = {"Adult Avo Shopping", {323, 128, 350, 400, 3}, 34, "NOT ENOUGH COINS"};
+const Grid kAdultFridgeGrid = {685, 265, 200, 200, 3};
 
 // Baby sheets are the same size as the adult ones; what differs is the file
 // and, for the avos, how the frames are laid out.
@@ -33,28 +34,32 @@ const PetSpec kPets[] = {
       {"New Piskel-1 10.15.48ΓÇ»PM.png (2).png", 32, 36, 2, 2, 1.4f},
       {"Big2/eating/spritesheet.png", 32, 32, 3, 3, 1.4f}},
      kAdultAvoFoods,
-     kAdultShop},
+     kAdultShop,
+     {"Eating Adult Avo", kAdultFridgeGrid, 15}},
     {"baby_avo", Species::Avo, Stage::Baby, "smallAvoNormal.png",
      {{"Small2/Sleeping/spritesheet.png", 32, 32, 3, 3, 0.8f},
       {"Small2/Showering/spritesheet.png", 32, 32, 5, 5, 0.8f},
       {"Small2/medications/spritesheet.png", 32, 32, 2, 2, 1.4f},
       {"Small2/Eating/spritesheet.png", 32, 32, 3, 3, 1.4f}},
      kBabyAvoFoods,
-     {"Baby Avo Shop", {173, 300, 300, 0, 4}, 24, "NOT ENOUGH GOLD"}},
+     {"Baby Avo Shop", {173, 300, 300, 0, 4}, 24, "NOT ENOUGH GOLD"},
+     {"Eating Baby Avo", {510, 150, 450, 450, 2}, 15}},
     {"adult_ghost", Species::Ghost, Stage::Adult, "bigCharNormalGhost.png",
      {{"Big/Sleeping.png", 36, 36, 2, 3, 0.8f},
       {"Big/Shower.png", 36, 36, 2, 4, 0.8f},
       {"Big/Medicine .png", 32, 32, 1, 2, 1.4f},
       {"Big/eating.png", 32, 32, 2, 3, 1.4f}},
      kAdultGhostFoods,
-     {"Shopping", kAdultShop.grid, 34, "NOT ENOUGH COINS"}},
+     {"Shopping", kAdultShop.grid, 34, "NOT ENOUGH COINS"},
+     {"Eating Ghost Window", kAdultFridgeGrid, 5}},
     {"baby_ghost", Species::Ghost, Stage::Baby, "smallGhostNormal.png",
      {{"Small/Sleeping.png", 36, 36, 2, 3, 0.8f},
       {"Small/Shower.png", 36, 36, 2, 4, 0.8f},
       {"Small/Medicine .png", 32, 32, 1, 2, 1.4f},
       {"Small/eating.png", 32, 32, 2, 3, 1.4f}},
      kBabyGhostFoods,
-     {"Baby Ghost Shopping", {560, 240, 250, 250, 2}, 24, "NOT ENOUGH COINS"}},
+     {"Baby Ghost Shopping", {560, 240, 250, 250, 2}, 24, "NOT ENOUGH COINS"},
+     {"Eating Baby Ghost", {585, 265, 200, 200, 2}, 15}},
 };
 
 }  // namespace
