@@ -4,15 +4,11 @@
 #include <iostream>
 #include <string>
 
-#include "AdultAvoWindow.h"
-#include "AdultGhostWindow.h"
-#include "BabyAvoWindow.h"
-#include "BabyGhostWindow.h"
 #include "EatingAdultGhostWindow.h"
 #include "EatingBabyAvo.h"
 #include "EatingBabyGhost.h"
-#include "Item.h"
 #include "src/minigames/math.h"
+#include "src/scenes/scenes.h"
 #include "avo.h"
 #include "ghost.h"
 #include "src/minigames/boxes.h"
@@ -73,7 +69,7 @@ int main() {
     petStats.setIQLevel(stats[3]);
     petStats.setTotalMoney(stats[4]);
   }
-  std::vector<Item> basket; // User's shopping basket
+  Basket basket;
   SpriteLoader* current_pet = new SpriteLoader;
 
   // creating buttons
@@ -188,39 +184,7 @@ int main() {
           current_pet->animate(*pet_spec, Activity::Medicine, main_window, font, selectedQuote, &petStats);
 
         } else if (x >= 470 && x <= 620 && y >= 680 && y <= 830) {
-          std::cout << "Shopping Button" << std::endl;
-          //youre part brookyln
-          if (user_pet=="adult_avo"){
-               // Create an instance of the shopping window
-              AdultAvoShoppingWindow shoppingWindow(font, petStats.getMoney(), basket);
-              std::cout << "Shopping window created." << std::endl;
-              shoppingWindow.open();
-              petStats.changeMoney(-(petStats.getMoney()-(shoppingWindow.returnCoins())));
-          }
-          else if(user_pet=="baby_avo"){
-           // Create BabyAvo instance
-            BabyAvo shop(font, petStats.getMoney(), basket);
-            std::cout << "Shopping window created." << std::endl;
-            shop.open();
-            petStats.changeMoney(-(petStats.getMoney() - (shop.returnCoins())));
-          } else if (user_pet == "baby_ghost") {
-            BabyGhostShoppingWindow shoppingWindow(font, petStats.getMoney(),
-                                                   basket);
-            // Open the window
-            shoppingWindow.open();
-            petStats.changeMoney(
-                -(petStats.getMoney() - (shoppingWindow.returnCoins())));
-
-          } else if (user_pet == "adult_ghost") {
-            AdultGhostWindow AdultGhostWindow(font, petStats.getMoney(),
-                                              basket);
-
-            // Open the shopping window
-            AdultGhostWindow.open();
-            petStats.changeMoney(
-                -(petStats.getMoney() - (AdultGhostWindow.returnCoins())));
-          }
-
+          petStats.setTotalMoney(runShop(*pet_spec, font, petStats.getMoney(), basket));
         } else if (x >= 900 && x <= 1050 && y >= 680 && y <= 830) {
           backgroundMusic.pause();
           std::cout << "Math Button" << std::endl;
@@ -295,17 +259,8 @@ int main() {
               << std::endl;
     // Iterate through the basket and write item details to the file
     statsFile.flush();
-    // Create a map to track quantities of items
-    std::map<std::string, std::pair<int, int>> itemCounts; // <item_name, quantity>>
-
-    // Iterate through the basket and count the items
-    for (const auto& item : basket) {
-      itemCounts[item.name].first = item.price; // set the price
-      itemCounts[item.name].second++; // increment quantity
-    }
-    // Write items to file
-    for (const auto& entry : itemCounts) {
-      statsFile << entry.first << " " << entry.second.second << "\n";
+    for (const auto& entry : basket) {
+      statsFile << entry.first << " " << entry.second << "\n";
     }
     }
   return 0;

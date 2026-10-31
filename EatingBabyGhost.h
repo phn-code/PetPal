@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "EatingAdultAvo.h"  // Ensure this is correctly defined
-#include "Item.h"            // Add this if ItemList is in a separate file
 #include "pet_stats.h"
 // EatingBabyGhost class to handle the interaction with food items
 class EatingBabyGhost {

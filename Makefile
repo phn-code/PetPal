@@ -9,8 +9,8 @@ SFML_LDFLAGS = -L$(SFML_PREFIX)/lib -Wl,-rpath,$(SFML_PREFIX)/lib \
 BUILD = build
 
 SOURCES = buttons.cpp src/catalog.cpp src/anim.cpp src/minigames/math.cpp src/minigames/boxes.cpp \
-          pet_stats.cpp AdultAvoWindow.cpp BabyAvoWindow.cpp \
-          AdultGhostWindow.cpp BabyGhostWindow.cpp EatingAdultAvo.cpp \
+          pet_stats.cpp src/scenes/shop.cpp \
+          EatingAdultAvo.cpp \
           EatingBabyAvo.cpp EatingAdultGhostWindow.cpp EatingBabyGhost.cpp
 HEADERS = $(wildcard *.h src/*.h src/*/*.h)
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 enum class Species { Avo, Ghost };
 enum class Stage { Adult, Baby };
@@ -19,12 +20,34 @@ struct Sheet {
   float frameSeconds;
 };
 
+struct Food {
+  const char* name;
+  int price;
+  const char* icon;
+};
+
+// Cell i of a grid of 150 px icons sits at (x + (i % cols) * dx, y + (i / cols) * dy).
+struct Grid {
+  int x, y;
+  int dx, dy;
+  int cols;
+};
+
+struct ShopLayout {
+  const char* title;
+  Grid grid;
+  unsigned labelSize;
+  const char* noCoinsText;
+};
+
 struct PetSpec {
   const char* name;  // the save-file token, e.g. "adult_avo"
   Species species;
   Stage stage;
   const char* idleSprite;
   Sheet sheets[4];
+  std::vector<Food> foods;
+  ShopLayout shop;
 };
 
 const PetSpec* findPet(const std::string& name);
