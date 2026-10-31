@@ -8,15 +8,18 @@ SFML_LDFLAGS = -L$(SFML_PREFIX)/lib -Wl,-rpath,$(SFML_PREFIX)/lib \
 
 BUILD = build
 
-SOURCES = buttons.cpp src/catalog.cpp src/anim.cpp src/minigames/math.cpp src/minigames/boxes.cpp \
-          pet_stats.cpp src/save.cpp src/scenes/shop.cpp src/scenes/fridge.cpp
-HEADERS = $(wildcard *.h src/*.h src/*/*.h)
+SOURCES = src/main.cpp src/catalog.cpp src/stats.cpp src/save.cpp src/anim.cpp src/quote.cpp \
+          src/scenes/menu.cpp src/scenes/select.cpp src/scenes/home.cpp src/scenes/shop.cpp \
+          src/scenes/fridge.cpp src/scenes/info.cpp \
+          src/minigames/boxes.cpp src/minigames/math.cpp
+HEADERS = $(wildcard src/*.h src/*/*.h)
 
-UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp src/catalog.cpp src/anim.cpp src/minigames/boxes.cpp
-
-# The pin builds production sources with tests/pin/shim.h force-included.
-# tests/pin/pin.cpp includes buttons.cpp itself, with main renamed.
-PIN_SOURCES = $(filter-out buttons.cpp,$(SOURCES)) tests/pin/pin.cpp
+# Unit tests and the pin both build with tests/pin/shim.h force-included, which
+# swaps the window, clock, mouse and audio for scripted fakes.
+# tests/pin/pin.cpp includes src/main.cpp itself, with main renamed.
+UNIT_SOURCES = tests/unit/unit_tests.cpp src/stats.cpp src/catalog.cpp src/anim.cpp \
+               src/quote.cpp src/minigames/boxes.cpp
+PIN_SOURCES = $(filter-out src/main.cpp,$(SOURCES)) tests/pin/pin.cpp
 
 .PHONY: all run test pin pin-update pin-images check-assets clean
 
@@ -28,15 +31,15 @@ $(BUILD):
 $(BUILD)/Petpal: $(SOURCES) $(HEADERS) | $(BUILD)
 	$(CXX) $(CXXFLAGS) $(SFML_CFLAGS) $(SOURCES) $(SFML_LDFLAGS) -o $@
 
-$(BUILD)/UnitTesting: $(UNIT_SOURCES) $(HEADERS) | $(BUILD)
-	$(CXX) $(CXXFLAGS) $(SFML_CFLAGS) $(UNIT_SOURCES) $(SFML_LDFLAGS) -o $@
+$(BUILD)/UnitTesting: $(UNIT_SOURCES) $(HEADERS) tests/pin/shim.h | $(BUILD)
+	$(CXX) $(CXXFLAGS) -include tests/pin/shim.h $(SFML_CFLAGS) $(UNIT_SOURCES) $(SFML_LDFLAGS) -o $@
 
 # Assets load by relative path, so binaries run from the repo root.
 run: $(BUILD)/Petpal
 	./$(BUILD)/Petpal
 
 $(BUILD)/pin: $(SOURCES) $(HEADERS) tests/pin/shim.h tests/pin/pin.cpp | $(BUILD)
-	$(CXX) $(CXXFLAGS) -I. -include tests/pin/shim.h $(SFML_CFLAGS) $(PIN_SOURCES) $(SFML_LDFLAGS) -o $@
+	$(CXX) $(CXXFLAGS) -include tests/pin/shim.h $(SFML_CFLAGS) $(PIN_SOURCES) $(SFML_LDFLAGS) -o $@
 
 test: $(BUILD)/UnitTesting
 	./$(BUILD)/UnitTesting

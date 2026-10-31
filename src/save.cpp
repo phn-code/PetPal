@@ -8,8 +8,9 @@ std::optional<SaveFile> readSave(const std::string& path) {
   std::string line;
   if (!std::getline(in, line)) return std::nullopt;
   SaveFile save;
+  Stats& s = save.stats;
   std::istringstream head(line);
-  if (!(head >> save.pet >> save.health >> save.sleep >> save.hunger >> save.iq >> save.money))
+  if (!(head >> save.pet >> s.health >> s.sleep >> s.hunger >> s.iq >> s.money))
     return std::nullopt;
   while (std::getline(in, line)) {
     // Food names contain spaces, so the count is the last word.
@@ -24,4 +25,12 @@ std::optional<SaveFile> readSave(const std::string& path) {
       save.pantry[name.substr(0, split)] = std::stoi(name.substr(split + 1));
   }
   return save;
+}
+
+void writeSave(const std::string& path, const std::string& pet, const Stats& s,
+               const std::map<std::string, int>& pantry) {
+  std::ofstream out(path);
+  out << pet << " " << s.health << " " << s.sleep << " " << s.hunger << " " << s.iq << " "
+      << s.money << "\n\n";
+  for (const auto& entry : pantry) out << entry.first << " " << entry.second << "\n";
 }

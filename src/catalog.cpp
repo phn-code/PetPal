@@ -75,3 +75,8 @@ const PetSpec& findPet(Species species, Stage stage) {
     if (pet.species == species && pet.stage == stage) return pet;
   return kPets[0];
 }
+
+const char* soundPath(Species species) {
+  return species == Species::Avo ? "[Cartoon Sound FX] Avocado sound effect.mp3"
+                                 : "[Cartoon Sound FX] Ghost hover vintage synth effect.mp3";
+}

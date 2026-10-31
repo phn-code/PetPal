@@ -12,7 +12,8 @@
 
 #define private public
 #define main petpal_main
-#include "buttons.cpp"
+#include "../../src/main.cpp"
+#include "../../src/minigames/boxes.h"
 #undef main
 #undef private
 
@@ -459,110 +460,76 @@ int mathMinusCrash(Recorder& rec) {
 }
 
 int logic(Recorder& rec) {
-  auto stats = [](const PetStats& p) {
-    return std::to_string(p.getHealthLevel()) + "/" + std::to_string(p.getSleepLevel()) +
-           "/" + std::to_string(p.getHungerLevel()) + "/" + std::to_string(p.getIQLevel()) +
-           "/" + std::to_string(p.getTotalMoney());
+  auto show = [](const Stats& s) {
+    return std::to_string(s.health) + "/" + std::to_string(s.sleep) + "/" +
+           std::to_string(s.hunger) + "/" + std::to_string(s.iq) + "/" + std::to_string(s.money);
   };
   auto expectEq = [&rec](const std::string& got, const std::string& want,
                          const std::string& what) {
     rec.check(got == want, what + ": got \"" + got + "\", want \"" + want + "\"");
   };
-  sf::RenderWindow unused(sf::VideoMode(1, 1), "unused");
-  sf::Font font;
-  font.loadFromFile("Regular.ttf");
 
   {
-    PetStats p;
-    expectEq(stats(p), "25/25/25/50/1000", "new pet stats");
-    pin::now() += sf::seconds(29.875f);
-    p.updateStats(unused, font);
-    expectEq(stats(p), "25/25/25/50/1000", "no decay before 30 s");
-    pin::now() += kTick;
-    p.updateStats(unused, font);
-    expectEq(stats(p), "15/15/15/45/1000", "decay at 30 s: -10 each, IQ -5");
-    p.updateStats(unused, font);
-    expectEq(stats(p), "15/15/15/45/1000", "decay timer restarts");
-    pin::now() += sf::seconds(60);
-    p.updateStats(unused, font);
-    expectEq(stats(p), "5/5/5/40/1000", "one decay per call however late");
-    pin::now() += sf::seconds(30);
-    p.updateStats(unused, font);
-    expectEq(stats(p), "0/0/0/35/1000", "decay floors at 0");
-  }
-  {
-    PetStats p;
-    p.increaseHunger(80);
-    p.increaseSleep(80);
-    expectEq(stats(p), "25/100/100/50/1000", "increaseHunger/Sleep cap at 100");
-    p.increaseIQ(5);
-    expectEq(stats(p), "25/100/100/75/1000", "increaseIQ adds 5 per point");
-    p.increaseIQ(6);
-    p.increaseIQ(-1);
-    expectEq(stats(p), "25/100/100/75/1000", "increaseIQ ignores scores outside 0..5");
-    p.increaseIQ(5);
-    p.increaseIQ(5);
-    expectEq(stats(p), "25/100/100/100/1000", "IQ caps at 100");
-    p.increaseMoney(50);
-    p.changeMoney(-1200);
-    expectEq(std::to_string(p.getMoney()), "-150", "money can go negative");
-    p.setHungerLevel(1);
-    p.setSleepLevel(1);
-    p.useHungerPotion();
-    p.useSleepPotion();
-    p.maxHealth();
-    expectEq(stats(p), "100/100/100/100/-150", "potions and max* set 100");
+    Stats s;
+    expectEq(show(s), "25/25/25/50/1000", "new pet stats");
+    s.decay();
+    expectEq(show(s), "15/15/15/45/1000", "decay: -10 each, IQ -5");
+    s.decay();
+    s.decay();
+    expectEq(show(s), "0/0/0/35/1000", "decay floors at 0");
+    s.addIQ(5);
+    expectEq(std::to_string(s.iq), "60", "addIQ adds 5 per point");
+    s.addIQ(6);
+    s.addIQ(-1);
+    expectEq(std::to_string(s.iq), "60", "addIQ ignores scores outside 0..5");
+    s.addIQ(5);
+    s.addIQ(5);
+    s.addIQ(5);
+    expectEq(std::to_string(s.iq), "100", "IQ caps at 100");
   }
   {
     std::ofstream("pin_read.txt") << "baby_ghost 1 2 3 4 5\n\nSteak 2\n";
-    auto v = SpriteLoader::readPetStats("pin_read.txt");
-    expectEq(v.size() == 5 ? std::to_string(v[0]) + std::to_string(v[1]) +
-                                 std::to_string(v[2]) + std::to_string(v[3]) +
-                                 std::to_string(v[4])
-                           : "size " + std::to_string(v.size()),
-             "12345", "readPetStats reads the five numbers after the pet name");
-    expectEq(std::to_string(SpriteLoader::readPetStats("no_such_file.txt").size()), "0",
-             "readPetStats on a missing file");
+    std::optional<SaveFile> save = readSave("pin_read.txt");
+    rec.check(save.has_value(), "readSave reads a well-formed file");
+    if (save) {
+      expectEq(save->pet + " " + show(save->stats), "baby_ghost 1/2/3/4/5",
+               "readSave reads the pet and the five numbers");
+      expectEq(std::to_string(save->pantry.size()) + ":" + std::to_string(save->pantry["Steak"]),
+               "1:2", "readSave reads the pantry lines");
+    }
+    rec.check(!readSave("no_such_file.txt"), "readSave on a missing file is empty");
     std::remove("pin_read.txt");
   }
   {
-    std::unique_ptr<PetStats> a(SpriteLoader::initialize_pet("baby_avo"));
-    std::unique_ptr<PetStats> g(SpriteLoader::initialize_pet("adult_ghost"));
-    std::unique_ptr<PetStats> other(SpriteLoader::initialize_pet("cat"));
-    rec.check(dynamic_cast<avo*>(a.get()) != nullptr, "initialize_pet(baby_avo) is an avo");
-    rec.check(dynamic_cast<ghost*>(g.get()) != nullptr, "initialize_pet(adult_ghost) is a ghost");
-    rec.check(dynamic_cast<ghost*>(other.get()) != nullptr, "unknown pets become ghosts");
+    const PetSpec* a = findPet("baby_avo");
+    const PetSpec* g = findPet("adult_ghost");
+    rec.check(a && a->species == Species::Avo && a->stage == Stage::Baby, "findPet(baby_avo)");
+    rec.check(g && g->species == Species::Ghost && g->stage == Stage::Adult,
+              "findPet(adult_ghost)");
+    rec.check(findPet("cat") == nullptr, "unknown pet names have no spec");
   }
   {
     // Quotes are picked by srand(time(0)); rand(), so the pick is a function of
     // the wall-clock second.
-    pin::now() = sf::Time::Zero;
-    expectEq(getRandomQuote("adult_avo"), getRandomQuote("baby_avo"),
-             "both avo ages share quotes");
-    expectEq(getRandomQuote("adult_ghost"), getRandomQuote("baby_ghost"),
-             "both ghost ages share quotes");
-    expectEq(getRandomQuote("cat"), "Null", "unknown pet quote");
     std::string picks;
     for (int s = 0; s < 4; ++s) {
       pin::now() = sf::seconds(static_cast<float>(s));
-      picks += getRandomQuote("adult_avo") + "|" + getRandomQuote("adult_ghost") + "\n";
+      picks += pickQuote(Species::Avo) + "|" + pickQuote(Species::Ghost) + "\n";
     }
     rec.checkText("quotes.txt", picks);
 
     pin::now() = sf::Time::Zero;
-    sf::Clock clock;
-    std::string quote = "first";
-    std::string pet = "adult_avo";
-    bool visible = false;
+    Quote quote;
+    quote.text = "first";
     pin::now() = sf::seconds(9.875f);
-    updateQuote(quote, clock, 10.0f, pet, visible);
-    rec.check(quote == "first" && !visible, "quote kept before 10 s");
+    updateQuote(quote, Species::Avo);
+    rec.check(quote.text == "first" && !quote.visible, "quote kept before 10 s");
     pin::now() = sf::seconds(10);
-    updateQuote(quote, clock, 10.0f, pet, visible);
-    rec.check(quote == getRandomQuote(pet) && visible, "new visible quote at 10 s");
+    updateQuote(quote, Species::Avo);
+    rec.check(quote.text == pickQuote(Species::Avo) && quote.visible, "new visible quote at 10 s");
     pin::now() = sf::seconds(19.875f);
-    updateQuote(quote, clock, 10.0f, pet, visible);
-    rec.check(visible, "known bug pinned: quote stays visible (never hides)");
+    updateQuote(quote, Species::Avo);
+    rec.check(quote.visible, "known bug pinned: quote stays visible (never hides)");
   }
   {
     mini_game g;

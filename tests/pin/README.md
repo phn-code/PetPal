@@ -21,7 +21,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - `sf::Mouse` and window events come from the scenario script.
 - `sf::Music` is silent.
 
-`pin.cpp` includes `buttons.cpp` with `main` renamed, so each scenario drives the real `main()` through menus, clicks and keys. Each scenario runs in its own process and sandbox directory, because the game reads and writes `pet_stats.txt` in its working directory.
+`pin.cpp` includes `src/main.cpp` with `main` renamed, so each scenario drives the real `main()` through menus, clicks and keys. Each scenario runs in its own process and sandbox directory, because the game reads and writes `pet_stats.txt` in its working directory.
 
 ## Goldens
 
@@ -35,8 +35,10 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - For each of the four pets: the home screen, every frame of the sleep, shower, medicine and eating animations, the shop (buying items and running out of coins), the fridge (eating a stocked and an unstocked item), the info screen, a 30 s stat decay, and the save file.
 - Loading a save with all stats at 0, which shows the warnings.
 - The math game (intro, rules, five answers, results) and the box minigame (intro, every 25th frame of play, game over).
-- `logic`: `PetStats` decay, caps and setters; `readPetStats`; `initialize_pet`; quote selection and `updateQuote`; minigame scoring by box height; `Animation` stepping.
-- Three known bugs, pinned as current behavior: the quote never hides, closing the start menu leaves the game spinning (`menu_close_spins`), and a lone "-" answer crashes the math game (`math_minus_crash`). Fixing one of these bugs updates its pin on purpose.
+- `logic`: `Stats` decay and caps; `readSave`; `findPet`; quote selection and `updateQuote`; minigame scoring by box height.
+- Three known bugs, pinned as current behavior: the quote never hides, closing the start menu leaves the game spinning (`menu_close_spins`), and a lone "-" answer crashes the math game (`math_minus_crash`).
+
+The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window. Fixing one of these bugs updates its pin on purpose.
 
 ## What is not pinned
 

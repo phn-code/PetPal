@@ -19,7 +19,7 @@ FridgeRules rulesFor(const PetSpec& pet) {
 
 }  // namespace
 
-void runFridge(const PetSpec& pet, sf::Font& font, PetStats& stats) {
+void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats) {
   const FridgeLayout& layout = pet.fridge;
   const FridgeRules rules = rulesFor(pet);
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
@@ -60,10 +60,10 @@ void runFridge(const PetSpec& pet, sf::Font& font, PetStats& stats) {
         if (!icons.sprites[i].getGlobalBounds().contains(static_cast<float>(click.x),
                                                          static_cast<float>(click.y)))
           continue;
-        if (rules.feedBeforeStockCheck) stats.maxHunger();
+        if (rules.feedBeforeStockCheck) stats.hunger = 100;
         int& left = rules.phantomStock ? phantom[i] : stock[i];
         if (left > 0) {
-          if (!rules.feedBeforeStockCheck) stats.maxHunger();
+          if (!rules.feedBeforeStockCheck) stats.hunger = 100;
           left--;
           quantities[i].setString("Quantity: " + std::to_string(left));
         } else {
