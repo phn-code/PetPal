@@ -13,11 +13,7 @@
 #include "EatingBabyGhost.h"
 #include "Item.h"
 #include "src/minigames/math.h"
-#include "adult_avo.h"
-#include "adult_ghost.h"
 #include "avo.h"
-#include "baby_avo.h"
-#include "baby_ghost.h"
 #include "ghost.h"
 #include "src/minigames/boxes.h"
 #include "pet_stats.h"
@@ -68,20 +64,7 @@ int main() {
   }
   std::cout << "User selected pet: " << user_pet << std::endl;
   PetStats* current_user_pet = SpriteLoader::initialize_pet(user_pet);
-  PetStats* current_pet_selected=NULL;
-
-
-
-
-  if(user_pet=="baby_avo"){
-    current_pet_selected=new baby_avo;
-  }else if(user_pet=="baby_ghost"){
-    current_pet_selected=new baby_ghost;
-  }else if(user_pet=="adult_avo"){
-    current_pet_selected=new adult_avo;
-  }else{
-    current_pet_selected=new adult_ghost;
-  }
+  const PetSpec* pet_spec = findPet(user_pet);
   PetStats petStats;
   if (!new_game) {
     petStats.setHealthLevel(stats[0]);
@@ -120,11 +103,11 @@ int main() {
         if (x >= 40 && x <= 190 && y >= 130 && y <= 280) {
           std::cout << "Sleeping Button" << std::endl;
           petStats.maxSleep();
-          current_pet->animateSleepingPet(user_pet, main_window, font, selectedQuote, &petStats);
+          current_pet->animate(*pet_spec, Activity::Sleep, main_window, font, selectedQuote, &petStats);
         } else if (x >= 470 && x <= 620 && y >= 130 && y <= 280) {
           std::cout << "showering Button" << std::endl;
           petStats.maxHealth();
-          current_pet->animateShoweringPet(user_pet, main_window, font,selectedQuote, &petStats);
+          current_pet->animate(*pet_spec, Activity::Shower, main_window, font, selectedQuote, &petStats);
         } else if (x >= 900 && x <= 1050 && y >= 130 && y <= 280) {
           std::cout << "Game Button" << std::endl;
           backgroundMusic.pause();
@@ -197,12 +180,12 @@ int main() {
             delete[] basket;
           }
            
-          current_pet->animateEatingPet(user_pet, main_window, font,selectedQuote, &petStats);
+          current_pet->animate(*pet_spec, Activity::Eat, main_window, font, selectedQuote, &petStats);
 
         } else if (x >= 40 && x <= 190 && y >= 680 && y <= 830) {
           std::cout << "Medicine Button" << std::endl;
           petStats.maxHealth();
-          current_pet->animateGivingMedicine(user_pet, main_window, font,selectedQuote, &petStats);
+          current_pet->animate(*pet_spec, Activity::Medicine, main_window, font, selectedQuote, &petStats);
 
         } else if (x >= 470 && x <= 620 && y >= 680 && y <= 830) {
           std::cout << "Shopping Button" << std::endl;

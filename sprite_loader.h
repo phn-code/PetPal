@@ -5,10 +5,10 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include "adult_avo.h"
-#include "adult_ghost.h"
-#include "baby_avo.h"
-#include "baby_ghost.h"
+#include "avo.h"
+#include "ghost.h"
+#include "src/anim.h"
+#include "src/catalog.h"
 #include "pet_stats.h"
 #include "quotesFile.h"
 
@@ -282,234 +282,25 @@ class SpriteLoader {
     return "";  // Default return value
   }
 
-  static void animateSleepingPet(const std::string& user_pet,
-                                 sf::RenderWindow& main_window,
-                                 sf::Font font_type, std::string& quote,
-                                 PetStats* current_stats) {
-    Sleeping* sleeping = nullptr;
-    std::string spriteSheetPath;
-    if (user_pet == "adult_avo") {
-      spriteSheetPath = "Big2/sleeping/spritesheet.png";
-      sleeping = new adult_avo(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_avo") {
-      spriteSheetPath = "Small2/Sleeping/spritesheet.png";
-      sleeping = new baby_avo(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    } else if (user_pet == "adult_ghost") {
-      spriteSheetPath = "Big/Sleeping.png";
-      sleeping = new adult_ghost(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_ghost") {
-      spriteSheetPath = "Small/Sleeping.png";
-      sleeping = new baby_ghost(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    }
-    sleeping->startAnimation_sleeping();
-    sf::Clock clock;  // Clock to track time
+  // Every activity plays its sheet over the home screen for 6 seconds.
+  static void animate(const PetSpec& pet, Activity activity,
+                      sf::RenderWindow& main_window, sf::Font& font,
+                      std::string& quote, PetStats* current_stats) {
+    SheetPlayer anim(pet.sheets[static_cast<int>(activity)], activity);
+    sf::Clock clock;
     sf::Clock total_animation_time;
     while (main_window.isOpen()) {
       sf::Event event;
       while (main_window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) main_window.close();
       }
-
-      // Get the time elapsed since the last frame
-      float deltaTime = clock.restart().asSeconds();
-
-      // Update the Sleeping pet
-      sleeping->update_sleeping(deltaTime);
-
-      // Draw the Sleeping sprite
-      SpriteLoader::drawSprites(main_window);
-      sleeping->draw_sleeping(main_window);
-      renderQuote(main_window, font_type, quote);
-      current_stats->renderStats(main_window, font_type);
-      // Display the window contents
+      anim.update(clock.restart().asSeconds());
+      drawSprites(main_window);
+      anim.draw(main_window);
+      renderQuote(main_window, font, quote);
+      current_stats->renderStats(main_window, font);
       main_window.display();
-      if (total_animation_time.getElapsedTime().asSeconds() >= 6) {
-        break;  // Exit the animation after 6 seconds
-      }
-    }
-  }
-
-  static void animateShoweringPet(const std::string& user_pet,
-                                  sf::RenderWindow& main_window,
-                                  sf::Font font_type, std::string& quote,
-                                  PetStats* current_stats) {
-    Shower* showering = nullptr;  // Pointer to handle different pet types
-    std::string spriteSheetPath;
-
-    // Determine the correct pet type and create the corresponding showering
-    // object
-    if (user_pet == "adult_avo") {
-      spriteSheetPath = "Big2/showering/spritesheet.png";
-      showering = new adult_avo(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_avo") {
-      spriteSheetPath = "Small2/Showering/spritesheet.png";
-      showering = new baby_avo(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    } else if (user_pet == "adult_ghost") {
-      spriteSheetPath = "Big/Shower.png";
-      showering = new adult_ghost(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_ghost") {
-      spriteSheetPath = "Small/Shower.png";
-      showering = new baby_ghost(spriteSheetPath, 0.8f, 8.0f, 8.0f);
-    }
-
-    // Start the showering animation
-    showering->startAnimation_shower();
-    sf::Clock clock;  // Clock to track time
-    sf::Clock total_animation_time;
-
-    // Animation loop
-    while (main_window.isOpen()) {
-      sf::Event event;
-      while (main_window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-          main_window.close();
-        }
-      }
-
-      // Get the time elapsed since the last frame
-      float deltaTime = clock.restart().asSeconds();
-
-      // Update the showering pet
-      showering->update_shower(deltaTime);
-
-      // Draw the showering sprite
-      SpriteLoader::drawSprites(main_window);
-      showering->draw_shower(main_window);
-
-      // Render additional stats and quotes
-      renderQuote(main_window, font_type, quote);
-      current_stats->renderStats(main_window, font_type);
-
-      // Display the window contents
-      main_window.display();
-
-      // Exit the animation after 6 seconds
-      if (total_animation_time.getElapsedTime().asSeconds() >= 6) {
-        break;
-      }
-    }
-    delete showering;
-  }
-
-  static void animateEatingPet(const std::string& user_pet,
-                               sf::RenderWindow& main_window,
-                               sf::Font font_type, std::string& quote,
-                               PetStats* current_stats) {
-    Eating* eating = nullptr;  // Pointer to handle different pet types
-    std::string spriteSheetPath;
-
-    // Determine the correct pet type and create the corresponding eating object
-    if (user_pet == "adult_avo") {
-      spriteSheetPath = "Big2/Eating/spritesheet.png";
-      eating = new adult_avo(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_avo") {
-      spriteSheetPath = "Small2/Eating/spritesheet.png";
-      eating = new baby_avo(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "adult_ghost") {
-      spriteSheetPath = "Big/eating.png";
-      eating = new adult_ghost(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_ghost") {
-      spriteSheetPath = "Small/eating.png";
-      eating = new baby_ghost(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    }
-
-    // Start the eating animation
-    eating->startAnimation_eating();
-    sf::Clock clock;  // Clock to track time
-    sf::Clock total_animation_time;
-
-    // Animation loop
-    while (main_window.isOpen()) {
-      sf::Event event;
-      while (main_window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-          main_window.close();
-        }
-      }
-
-      // Get the time elapsed since the last frame
-      float deltaTime = clock.restart().asSeconds();
-
-      // Update the eating pet
-      eating->update_eating(deltaTime);
-
-      // Draw the eating sprite
-      SpriteLoader::drawSprites(main_window);
-      eating->draw_eating(main_window);
-
-      // Render additional stats and quotes
-      renderQuote(main_window, font_type, quote);
-      current_stats->renderStats(main_window, font_type);
-
-      // Display the window contents
-      main_window.display();
-
-      // Exit the animation after 6 seconds
-      if (total_animation_time.getElapsedTime().asSeconds() >= 6) {
-        break;
-      }
-    }
-    delete eating;
-  }
-
-  static void animateGivingMedicine(const std::string& user_pet,
-                                    sf::RenderWindow& main_window,
-                                    sf::Font font_type, std::string& quote,
-                                    PetStats* current_stats) {
-    Medicine* medicine = nullptr;  // Pointer to handle different pet types
-    std::string spriteSheetPath;
-
-    // Determine the correct pet type and create the corresponding medicine
-    // object
-    if (user_pet == "adult_avo") {
-      spriteSheetPath = "New Piskel-1 10.15.48ΓÇ»PM.png (2).png";
-      medicine = new adult_avo(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_avo") {
-      spriteSheetPath = "Small2/medications/spritesheet.png";
-      medicine = new baby_avo(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "adult_ghost") {
-      spriteSheetPath = "Big/Medicine .png";
-      medicine = new adult_ghost(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    } else if (user_pet == "baby_ghost") {
-      spriteSheetPath = "Small/Medicine .png";
-      medicine = new baby_ghost(spriteSheetPath, 1.4f, 8.0f, 8.0f);
-    }
-
-    // Start the medicine animation
-    medicine->startAnimation_medicine();
-    sf::Clock clock;  // Clock to track time
-    sf::Clock total_animation_time;
-
-    // Animation loop
-    while (main_window.isOpen()) {
-      sf::Event event;
-      while (main_window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-          main_window.close();
-        }
-      }
-
-      // Get the time elapsed since the last frame
-      float deltaTime = clock.restart().asSeconds();
-
-      // Update the medicine pet
-      medicine->update_medicine(deltaTime);
-
-      // Draw the medicine sprite
-      SpriteLoader::drawSprites(main_window);
-      medicine->draw_medicine(main_window);
-
-      // Render additional stats and quotes
-      renderQuote(main_window, font_type, quote);
-      current_stats->renderStats(main_window, font_type);
-
-      // Display the window contents
-      main_window.display();
-
-      // Exit the animation after 6 seconds
-      if (total_animation_time.getElapsedTime().asSeconds() >= 6) {
-        break;
-      }
+      if (total_animation_time.getElapsedTime().asSeconds() >= 6) break;
     }
   }
 

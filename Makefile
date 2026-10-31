@@ -8,13 +8,13 @@ SFML_LDFLAGS = -L$(SFML_PREFIX)/lib -Wl,-rpath,$(SFML_PREFIX)/lib \
 
 BUILD = build
 
-SOURCES = buttons.cpp src/minigames/math.cpp src/minigames/boxes.cpp \
+SOURCES = buttons.cpp src/catalog.cpp src/anim.cpp src/minigames/math.cpp src/minigames/boxes.cpp \
           pet_stats.cpp AdultAvoWindow.cpp BabyAvoWindow.cpp \
           AdultGhostWindow.cpp BabyGhostWindow.cpp EatingAdultAvo.cpp \
           EatingBabyAvo.cpp EatingAdultGhostWindow.cpp EatingBabyGhost.cpp
 HEADERS = $(wildcard *.h src/*.h src/*/*.h)
 
-UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp src/minigames/boxes.cpp
+UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp src/catalog.cpp src/anim.cpp src/minigames/boxes.cpp
 
 # The pin builds production sources with tests/pin/shim.h force-included.
 # tests/pin/pin.cpp includes buttons.cpp itself, with main renamed.

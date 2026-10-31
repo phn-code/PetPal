@@ -1,7 +1,7 @@
 #include "src/minigames/boxes.h"
 #include "pet_stats.h"
-#include "adult_avo.h"
 #include "avo.h"
+#include "src/anim.h"
 #include <iostream>
 #include <SFML/System.hpp>
 #include <set>
@@ -140,82 +140,30 @@ private:
         std::cout << std::endl;
     }
 
-    void adultAvoTestConstructor() {
-        adult_avo avo("moon.png", 0.1f);
-        // Since we can't directly check private members, we might rely on behavior
-        std::cout << "[AdultAvo Constructor Test] Passed" << std::endl;
+    void sheetPlayerAdvancesFrames() {
+        const PetSpec& pet = findPet(Species::Avo, Stage::Adult);
+        SheetPlayer shower(pet.sheets[static_cast<int>(Activity::Shower)], Activity::Shower);
+        shower.update(1.4f);
+        shower.update(1.4f);
+        if (shower.frame() == 2 && shower.rect().left == 64) {
+            std::cout << "[SheetPlayer Frame Test] Passed" << std::endl;
+        } else {
+            recordFailure("[SheetPlayer Frame Test]"); std::cout << "[SheetPlayer Frame Test] Failed: frame " << shower.frame() << " left " << shower.rect().left << std::endl;
+        }
         std::cout << std::endl;
     }
 
-    void adultAvoTestStartAnimationShower() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_shower();
-        // We could check the initial position and animation state if they are accessible
-        std::cout << "[AdultAvo Shower Animation Start Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestUpdateShower() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_shower();
-        float deltaTime = 0.1f; // Simulate time passing
-        avo.update_shower(deltaTime);
-        // Check the current frame or any other change in state
-        std::cout << "[AdultAvo Shower Update Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestStartAnimationEating() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_eating();
-        // Check animation state
-        std::cout << "[AdultAvo Eating Animation Start Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestUpdateEating() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_eating();
-        float deltaTime = 0.1f; // Simulate time passing
-        avo.update_eating(deltaTime);
-        // Check the current frame or any other change in state
-        std::cout << "[AdultAvo Eating Update Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestStartAnimationSleeping() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_sleeping();
-        // Check animation state
-        std::cout << "[AdultAvo Sleeping Animation Start Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestUpdateSleeping() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_sleeping();
-        float deltaTime = 0.1f; // Simulate time passing
-        avo.update_sleeping(deltaTime);
-        // Check the current frame or any other change in state
-        std::cout << "[AdultAvo Sleeping Update Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestStartAnimationMedicine() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_medicine();
-        // Check animation state
-        std::cout << "[AdultAvo Medicine Animation Start Test] Passed" << std::endl;
-        std::cout << std::endl;
-    }
-
-    void adultAvoTestUpdateMedicine() {
-        adult_avo avo("moon.png", 0.1f);
-        avo.startAnimation_medicine();
-        float deltaTime = 0.1f; // Simulate time passing
-        avo.update_medicine(deltaTime);
-        // Check the current frame or any other change in state
-        std::cout << "[AdultAvo Medicine Update Test] Passed" << std::endl;
+    void sheetPlayerEatingHalvesLaterFrames() {
+        const PetSpec& pet = findPet(Species::Ghost, Stage::Baby);
+        SheetPlayer eat(pet.sheets[static_cast<int>(Activity::Eat)], Activity::Eat);
+        eat.update(1.4f);   // frame 1 after a full duration
+        eat.update(0.7f);   // frame 2 after half
+        eat.update(0.7f);   // back to frame 0
+        if (eat.frame() == 0 && eat.rect().top == 0) {
+            std::cout << "[SheetPlayer Eating Test] Passed" << std::endl;
+        } else {
+            recordFailure("[SheetPlayer Eating Test]"); std::cout << "[SheetPlayer Eating Test] Failed: frame " << eat.frame() << std::endl;
+        }
         std::cout << std::endl;
     }
 
@@ -265,15 +213,8 @@ public:
         testIncreaseMoney();
         testMaxStats();
         testGetters();
-        adultAvoTestConstructor();
-        adultAvoTestStartAnimationShower();
-        adultAvoTestUpdateShower();
-        adultAvoTestStartAnimationEating();
-        adultAvoTestUpdateEating();
-        adultAvoTestStartAnimationSleeping();
-        adultAvoTestUpdateSleeping();
-        adultAvoTestStartAnimationMedicine();
-        adultAvoTestUpdateMedicine();
+        sheetPlayerAdvancesFrames();
+        sheetPlayerEatingHalvesLaterFrames();
         avoTestUpdateAvoQuote();
 
         int unexpected = 0;

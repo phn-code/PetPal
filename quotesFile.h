@@ -9,10 +9,6 @@
 #include <string>
 #include <vector>
 
-#include "adult_avo.h"
-#include "adult_ghost.h"
-#include "baby_avo.h"
-#include "baby_ghost.h"
 #include "pet_stats.h"
 sf::Clock quote_clock;
 float displayDuration = 10.0f;

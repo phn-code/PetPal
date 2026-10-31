@@ -4,7 +4,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "pet_stats.h"
-#include "Shower.h"
 
 
 class PetStats {
