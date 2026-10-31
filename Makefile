@@ -20,7 +20,7 @@ UNIT_SOURCES = UnitTestingMain.cpp pet_stats.cpp mini_game.cpp
 # tests/pin/pin.cpp includes buttons.cpp itself, with main renamed.
 PIN_SOURCES = $(filter-out buttons.cpp,$(SOURCES)) tests/pin/pin.cpp
 
-.PHONY: all run test pin pin-update pin-images clean
+.PHONY: all run test pin pin-update pin-images check-assets clean
 
 all: $(BUILD)/Petpal
 
@@ -47,6 +47,10 @@ test: $(BUILD)/UnitTesting
 # tests/golden. A mismatch writes the actual frame to build/pin-out.
 pin: $(BUILD)/pin
 	tests/pin/run.sh
+
+# Fails on an asset the code names but git lacks, or one nothing names.
+check-assets:
+	python3 tests/check_assets.py $(SOURCES) $(UNIT_SOURCES)
 
 # Rewrite the manifests. Only for intended behavior changes; review the diff of
 # tests/golden and look at changed frames with pin-images.
