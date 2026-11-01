@@ -40,6 +40,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - `math_escape_intro`: Escape during the math intro returns to the pet.
 - `close_quits`: closing the window on the start menu or the pet picker quits without writing a save.
 - `bad_save`: an unreadable save counts as no save, and a new game still starts.
+- `save_writes`: the save is written only when what it holds changes, and replaced whole rather than rewritten in place.
 - One known bug, pinned as current behavior: the quote never hides.
 
 The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window. Fixing one of these bugs updates its pin on purpose.

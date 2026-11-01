@@ -138,6 +138,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     std::cerr << "Failed to load pet sound!" << std::endl;
   petSound.setVolume(100);
 
+  std::string written;  // the save file's text as last written
   sf::Clock decayTimer;
   quote.text = pickQuote(pet.species);
 
@@ -210,7 +211,11 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     window.draw(art.idle);
     drawWarnings(window, font, stats);
     window.display();
-    writeSave("pet_stats.txt", pet.name, stats, pantry);
+    std::string save = formatSave(pet, stats, pantry);
+    if (save != written) {
+      writeSave("pet_stats.txt", save);
+      written = save;
+    }
   }
   return 0;
 }

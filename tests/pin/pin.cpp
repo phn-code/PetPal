@@ -434,6 +434,45 @@ int games(Recorder& rec) {
   return rec.finish();
 }
 
+// The save is written only when what it holds changes, and replaced whole: a
+// second name for the old file still reads the old save afterwards.
+int saveWrites(Recorder& rec) {
+  Script s(rec);
+  s.capturing = false;
+  startNewGame(s, {"baby_avo", kIntroAvo, kIntroBaby});
+  auto stats = [] {
+    std::optional<SaveFile> save = readSave("pet_stats.txt");
+    return save ? std::to_string(save->stats.health) + "/" + std::to_string(save->stats.sleep)
+                : std::string("no save");
+  };
+  // Each check waits one frame past the display it follows, because the game
+  // saves after displaying a frame.
+  s.then(kMain, 3, "idle: delete the save", [&rec, stats] {
+         rec.check(stats() == "25/25", "a new game writes its save, got " + stats());
+         std::remove("pet_stats.txt");
+       })
+      .then(kMain, 5, "idle: save stays deleted", [&rec] {
+        rec.check(!std::ifstream("pet_stats.txt"), "idle frames rewrote the save");
+      })
+      .click(kMain, kSleep.x, kSleep.y, "sleep")
+      .then(kMain, kAfterAnimation + 1, "after sleep: hold the save", [&rec, stats] {
+        rec.check(stats() == "25/100", "sleeping saves sleep 100, got " + stats());
+        rec.check(link("pet_stats.txt", "held.txt") == 0, "could not link the save");
+      })
+      .click(kMain, kShower.x, kShower.y, "shower")
+      .then(kMain, kAfterAnimation + 1, "after shower: check both names", [&rec, stats] {
+        rec.check(stats() == "100/100", "showering saves health 100, got " + stats());
+        std::optional<SaveFile> held = readSave("held.txt");
+        rec.check(held && held->stats.health == 25,
+                  "the old save was overwritten in place instead of replaced");
+      })
+      .close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: the game stopped early");
+  return rec.finish();
+}
+
 // A save the game cannot read counts as no save: Load shows "No Previous Games
 // Found" and a new game still starts.
 int badSave(Recorder& rec) {
@@ -640,7 +679,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -665,6 +704,7 @@ int main(int argc, char** argv) {
     if (name == "games") return games(rec);
     if (name == "close_quits") return closeQuits(rec);
     if (name == "bad_save") return badSave(rec);
+    if (name == "save_writes") return saveWrites(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);
   } catch (const std::exception& e) {

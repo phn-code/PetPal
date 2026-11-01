@@ -1,6 +1,8 @@
 #include "save.h"
 
+#include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 std::optional<SaveFile> readSave(const std::string& path) {
@@ -30,10 +32,23 @@ std::optional<SaveFile> readSave(const std::string& path) {
   return save;
 }
 
-void writeSave(const std::string& path, const std::string& pet, const Stats& s,
-               const Pantry& pantry) {
-  std::ofstream out(path);
-  out << pet << " " << s.health << " " << s.sleep << " " << s.hunger << " " << s.iq << " "
+std::string formatSave(const PetSpec& pet, const Stats& s, const Pantry& pantry) {
+  std::ostringstream out;
+  out << pet.name << " " << s.health << " " << s.sleep << " " << s.hunger << " " << s.iq << " "
       << s.money << "\n\n";
   for (const auto& entry : pantry) out << entry.first << " " << entry.second << "\n";
+  return out.str();
+}
+
+void writeSave(const std::string& path, const std::string& text) {
+  const std::string temp = path + ".tmp";
+  std::ofstream out(temp);
+  out << text;
+  out.close();
+  if (!out) {
+    std::cerr << "Could not write " << temp << "; the previous save is kept" << std::endl;
+    std::remove(temp.c_str());
+    return;
+  }
+  std::rename(temp.c_str(), path.c_str());
 }
