@@ -52,3 +52,6 @@ void runInfo(sf::Font& font);
 
 // The box-catching game. Returns the coins won.
 int runBoxes(sf::Font& font);
+
+// Five arithmetic questions against the clock. Returns how many were right.
+int runMath(sf::Font& font);

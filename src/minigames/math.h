@@ -1,15 +1,9 @@
-#ifndef MATHGAME_H
-#define MATHGAME_H
+// The math game. runMath() in scenes/scenes.h plays it.
+#pragma once
 
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
 #include <limits>
 #include <optional>
 #include <string>
-#include <vector>
 
 // The answer being typed: a sign and at most as many digits as any int holds,
 // so every state converts to a number.
@@ -39,36 +33,3 @@ class AnswerInput {
   bool negative_ = false;
   std::string digits_;
 };
-
-class math_game {
- private:
-  sf::RenderWindow* game_window;
-  sf::Event ev;
-  int correct_answers;
-
-  // store current question and answer:
-  std::string current_question;
-  int current_answer;
-  AnswerInput current_input;
-  int number_of_answers;
-
-  void generate_question();
-  void display_intro();
-  void rules_page();
-  void display_results();  // display how many question they got correct and
-                           // coins gained as a result
-
-  // time keeping for clock
-  sf::Clock timer;
-  double total_time;
-  sf::Music math_audio;
-  sf::Music wrong_audio;
-
- public:
-  math_game();  // constructor to initialize game window
-  ~math_game();
-  void run();
-  void render();
-  int getScore();
-};
-#endif

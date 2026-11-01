@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "../anim.h"
-#include "../minigames/math.h"
 #include "../save.h"
 #include "scenes.h"
 
@@ -185,8 +184,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
         }
         case Button::Math: {
           music.pause();
-          math_game game;
-          stats.addIQ(game.getScore());
+          stats.addIQ(runMath(font));
           music.play();
           break;
         }
