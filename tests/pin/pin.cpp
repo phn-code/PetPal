@@ -432,6 +432,22 @@ int games(Recorder& rec) {
   return rec.finish();
 }
 
+// A save the game cannot read counts as no save: Load shows "No Previous Games
+// Found" and a new game still starts.
+int badSave(Recorder& rec) {
+  std::ofstream("pet_stats.txt") << "adult_avo 1 2 three\n";
+  Script s(rec);
+  s.capturing = false;
+  startNewGame(s, {"baby_ghost", kIntroGhost, kIntroBaby});
+  s.close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: the game stopped early");
+  std::optional<SaveFile> save = readSave("pet_stats.txt");
+  rec.check(save.has_value(), "the new game did not replace the unreadable save");
+  return rec.finish();
+}
+
 // Closing the window on the start menu or the pet picker quits, and leaves no
 // save behind.
 int closeQuits(Recorder& rec) {
@@ -544,7 +560,7 @@ int logic(Recorder& rec) {
     std::optional<SaveFile> save = readSave("pin_read.txt");
     rec.check(save.has_value(), "readSave reads a well-formed file");
     if (save) {
-      expectEq(save->pet + " " + show(save->stats), "baby_ghost 1/2/3/4/5",
+      expectEq(std::string(save->pet->name) + " " + show(save->stats), "baby_ghost 1/2/3/4/5",
                "readSave reads the pet and the five numbers");
       expectEq(std::to_string(save->pantry.size()) + ":" + std::to_string(save->pantry["Steak"]),
                "1:2", "readSave reads the pantry lines");
@@ -622,7 +638,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -646,6 +662,7 @@ int main(int argc, char** argv) {
     if (name == "load_game") return loadGame(rec);
     if (name == "games") return games(rec);
     if (name == "close_quits") return closeQuits(rec);
+    if (name == "bad_save") return badSave(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);
   } catch (const std::exception& e) {

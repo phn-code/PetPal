@@ -31,23 +31,15 @@ int main() {
   Quote quote;
   const PetSpec* pet = nullptr;
   Stats stats;
-  MenuChoice choice = runMenu(window, font);
+  std::optional<SaveFile> save = readSave("pet_stats.txt");
+  MenuChoice choice = runMenu(window, font, save.has_value());
   if (choice == MenuChoice::Quit) return 0;
   if (choice == MenuChoice::NewGame) {
     pet = runSelect(window, font);
     window.display();  // the picker's last frame shows twice, as pinned
     if (!pet) return 0;
   } else {
-    std::optional<SaveFile> save = readSave("pet_stats.txt");
-    if (!save) {
-      std::cerr << "pet_stats.txt is missing or malformed" << std::endl;
-      return -1;
-    }
-    pet = findPet(save->pet);
-    if (!pet) {
-      std::cerr << "Unknown pet in pet_stats.txt: " << save->pet << std::endl;
-      return -1;
-    }
+    pet = save->pet;
     stats = save->stats;
     // Known bug (phase 3): save->pantry is not restored, so bought food is
     // lost on load.

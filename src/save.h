@@ -5,17 +5,19 @@
 #include <optional>
 #include <string>
 
+#include "catalog.h"
 #include "stats.h"
 
 // "<pet> <health> <sleep> <hunger> <iq> <money>", a blank line, then one
 // "<food name> <count>" per line.
 struct SaveFile {
-  std::string pet;
+  const PetSpec* pet;
   Stats stats;
   std::map<std::string, int> pantry;
 };
 
-// Empty when the file is missing or its first line is not a full stats line.
+// Empty when the file is missing or is not a save of a known pet with a
+// non-negative count on every food line.
 std::optional<SaveFile> readSave(const std::string& path);
 
 void writeSave(const std::string& path, const std::string& pet, const Stats& stats,

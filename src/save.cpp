@@ -9,9 +9,11 @@ std::optional<SaveFile> readSave(const std::string& path) {
   if (!std::getline(in, line)) return std::nullopt;
   SaveFile save;
   Stats& s = save.stats;
+  std::string pet;
   std::istringstream head(line);
-  if (!(head >> save.pet >> s.health >> s.sleep >> s.hunger >> s.iq >> s.money))
-    return std::nullopt;
+  if (!(head >> pet >> s.health >> s.sleep >> s.hunger >> s.iq >> s.money)) return std::nullopt;
+  save.pet = findPet(pet);
+  if (!save.pet) return std::nullopt;
   while (std::getline(in, line)) {
     // Food names contain spaces, so the count is the last word.
     std::istringstream words(line);
@@ -19,10 +21,11 @@ std::optional<SaveFile> readSave(const std::string& path) {
     while (words >> word) name += (name.empty() ? "" : " ") + word;
     if (name.empty()) continue;
     std::size_t split = name.find_last_of(' ');
-    if (split == std::string::npos)
-      save.pantry[name] = 0;
-    else
-      save.pantry[name.substr(0, split)] = std::stoi(name.substr(split + 1));
+    if (split == std::string::npos) return std::nullopt;
+    std::istringstream countText(name.substr(split + 1));
+    int count;
+    if (!(countText >> count) || !countText.eof() || count < 0) return std::nullopt;
+    save.pantry[name.substr(0, split)] = count;
   }
   return save;
 }

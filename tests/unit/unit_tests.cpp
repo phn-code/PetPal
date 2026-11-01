@@ -1,5 +1,6 @@
 // Logic checks that need no window. Built with tests/pin/shim.h force-included,
 // so sf::Clock reads the fake clock (pin::now()) and nothing opens on screen.
+#include <fstream>
 #include <iostream>
 #include <set>
 #include <string>
@@ -9,6 +10,7 @@
 #include "../../src/minigames/boxes.h"
 #include "../../src/minigames/math.h"
 #include "../../src/quote.h"
+#include "../../src/save.h"
 #include "../../src/stats.h"
 
 namespace {
@@ -104,6 +106,32 @@ void answerInputTests() {
         typed("999999999999"));
 }
 
+// "ok", "none", or "threw: <what>" for readSave on a file holding `text`.
+std::string readSaveOf(const std::string& text) {
+  const char* path = "build/unit_save.txt";
+  std::ofstream(path) << text;
+  try {
+    return readSave(path) ? "ok" : "none";
+  } catch (const std::exception& e) {
+    return std::string("threw: ") + e.what();
+  }
+}
+
+void readSaveTests() {
+  const std::string good = "adult_ghost 1 2 3 4 5\n\nChicken 2\nBaby Milk 1\n";
+  check(readSaveOf(good) == "ok", "[Save - Well Formed]", readSaveOf(good));
+  const std::pair<const char*, const char*> malformed[] = {
+      {"", "[Save - Empty File Is No Save]"},
+      {"adult_ghost 1 2\n", "[Save - Short Stats Line Is No Save]"},
+      {"cat 1 2 3 4 5\n", "[Save - Unknown Pet Is No Save]"},
+      {"adult_ghost 1 2 3 4 5\n\nChicken lots\n", "[Save - Bad Count Is No Save]"},
+      {"adult_ghost 1 2 3 4 5\n\nChicken 99999999999\n", "[Save - Huge Count Is No Save]"},
+      {"adult_ghost 1 2 3 4 5\n\nChicken\n", "[Save - Missing Count Is No Save]"},
+      {"adult_ghost 1 2 3 4 5\n\nChicken -1\n", "[Save - Negative Count Is No Save]"},
+  };
+  for (const auto& [text, name] : malformed) check(readSaveOf(text) == "none", name, readSaveOf(text));
+}
+
 }  // namespace
 
 int main() {
@@ -114,6 +142,7 @@ int main() {
   sheetPlayerEatingHalvesLaterFrames();
   quoteTests();
   answerInputTests();
+  readSaveTests();
 
   int unexpected = 0;
   for (const std::string& name : failures) {

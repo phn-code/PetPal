@@ -1,8 +1,6 @@
-#include <fstream>
-
 #include "scenes.h"
 
-MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font) {
+MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font, bool canLoad) {
   sf::Vector2u size = window.getSize();
 
   sf::Text newGame("New Game", font, 70);
@@ -36,7 +34,7 @@ MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font) {
         sf::Vector2f mouse(sf::Mouse::getPosition(window));
         if (newGame.getGlobalBounds().contains(mouse)) return MenuChoice::NewGame;
         if (loadGame.getGlobalBounds().contains(mouse)) {
-          if (std::ifstream("pet_stats.txt")) return MenuChoice::LoadGame;
+          if (canLoad) return MenuChoice::LoadGame;
           showNoGames = true;
         }
       }

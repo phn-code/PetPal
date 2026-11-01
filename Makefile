@@ -18,7 +18,7 @@ HEADERS = $(wildcard src/*.h src/*/*.h)
 # swaps the window, clock, mouse and audio for scripted fakes.
 # tests/pin/pin.cpp includes src/main.cpp itself, with main renamed.
 UNIT_SOURCES = tests/unit/unit_tests.cpp src/stats.cpp src/catalog.cpp src/anim.cpp \
-               src/quote.cpp src/minigames/boxes.cpp
+               src/quote.cpp src/save.cpp src/minigames/boxes.cpp
 PIN_SOURCES = $(filter-out src/main.cpp,$(SOURCES)) tests/pin/pin.cpp
 
 .PHONY: all run test pin pin-update pin-images check-assets clean

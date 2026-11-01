@@ -32,7 +32,8 @@ inline sf::Text makeText(const sf::Font& font, unsigned size, sf::Color color, f
 
 enum class MenuChoice { NewGame, LoadGame, Quit };
 
-MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font);
+// Load is offered only when there is a readable save.
+MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font, bool canLoad);
 
 // The pet picker. Null when the window was closed instead.
 const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font);
