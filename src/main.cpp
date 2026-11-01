@@ -38,7 +38,6 @@ int main() {
   if (choice == MenuChoice::Quit) return 0;
   if (choice == MenuChoice::NewGame) {
     pet = runSelect(window, font);
-    window.display();  // the picker's last frame shows twice, as pinned
     if (!pet) return 0;
   } else {
     pet = save->pet;

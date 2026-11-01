@@ -1,7 +1,7 @@
 0	My Virtual Pet	start	78127008ad3509909b5c8242dcd5a97ead63519cfb32b8434d4bf8375a2a67fd
 1	My Virtual Pet	menu: new game	303566b1f323ccd484a7d97186a468de1bdb8512f99dcf82aebaaef2f51fc590
 2	My Virtual Pet	intro: pick avo	6dd75606ca575e0f3395c71d2eb73f1888522e7755d88d8e105e9b194aa141af
-3	My Virtual Pet	intro: pick adult	6dd75606ca575e0f3395c71d2eb73f1888522e7755d88d8e105e9b194aa141af
+3	My Virtual Pet	intro: pick adult	c359247063ac9633079b20d9b8c10e7f240ccf40683183e30ca67de524cd4289
 4	My Virtual Pet	intro: pick adult	c359247063ac9633079b20d9b8c10e7f240ccf40683183e30ca67de524cd4289
 5	My Virtual Pet	left bar beside sleep	c359247063ac9633079b20d9b8c10e7f240ccf40683183e30ca67de524cd4289
 6	Adult Avo Shopping	shop	bb5a8c901c1894918812ced6fb93d6f92c50c03c8d2561f78da26d8ae64ed567

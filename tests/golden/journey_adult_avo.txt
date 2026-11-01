@@ -2,7 +2,7 @@
 1	My Virtual Pet	menu: load with no save	50b9091406ac891c9af5c33d4312756427e8a779ac3ded88f50c999005b922ad
 2	My Virtual Pet	menu: new game	f697549faabe28819521118a285fcfc99b16ffbb1e0aba0a764b3597bdc7b2eb
 3	My Virtual Pet	intro: pick species	f90f9913a8c1562bb3566ea5373fd3c3ec9553cadbe2696e2ccb7718c5b1ea4a
-4	My Virtual Pet	intro: pick age	f90f9913a8c1562bb3566ea5373fd3c3ec9553cadbe2696e2ccb7718c5b1ea4a
+4	My Virtual Pet	intro: pick age	dceec6747704b2d44f00d23cb4bc6a886db2f7926b2534c11ef4daf3b6fd4c44
 5	My Virtual Pet	intro: pick age	dceec6747704b2d44f00d23cb4bc6a886db2f7926b2534c11ef4daf3b6fd4c44
 6	My Virtual Pet	sleep	d5c2837b48c5329d1c6b2fb9175778a2674ced50c99fc1e33cf1065614fb9b43
 7	My Virtual Pet	sleep	d5c2837b48c5329d1c6b2fb9175778a2674ced50c99fc1e33cf1065614fb9b43
