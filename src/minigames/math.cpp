@@ -57,7 +57,6 @@ math_game::math_game() {
   total_time = 50.0;  // Set the total time for solving questions
   std::srand(static_cast<unsigned int>(
       std::time(0)));  // Seed for random number generation
-  current_input = "";  // Reset current user input
   game_window = new sf::RenderWindow(sf::VideoMode(1920, 1080),
                                      "Math Game");  // Create game window
   game_window->display();
@@ -71,7 +70,7 @@ math_game::math_game() {
 
 // Function to generate a new math question
 void math_game::generate_question() {
-  current_input = "";  // Resetting user input
+  current_input = AnswerInput();
   // Generate two random numbers and an operator
   int num1 = std::rand() % 100;
   int num2 = std::rand() % 100;
@@ -112,34 +111,20 @@ void math_game::run() {
         }
         // Handle key presses
         if (ev.type == sf::Event::KeyPressed) {
-          if (ev.key.code == sf::Keyboard::Enter) {  // Enter key pressed
-            // Check if the input is empty
-            if (current_input.empty()) {
-              break;  // Skip if no input
-            }
-            // Check if the answer is correct
-            if (current_answer == std::stoi(current_input)) {
-              correct_answers++;  // Increment correct answers
-            }
-            number_of_answers++;  // Increment total answers
-            has_entered = true;   // Mark that an answer has been entered
-            break;                // Exit event handling
-          } else if (ev.key.code ==
-                     sf::Keyboard::Dash) {  // Handle negative sign
-            current_input = '-' + current_input;
-          } else if (ev.key.code ==
-                     sf::Keyboard::BackSpace) {  // Handle backspace
-            if (!current_input.empty()) {
-              current_input = current_input.substr(
-                  0, current_input.size() - 1);  // Remove last character
-            }
+          if (ev.key.code == sf::Keyboard::Enter) {
+            std::optional<int> answer = current_input.value();
+            if (!answer) break;
+            if (*answer == current_answer) correct_answers++;
+            number_of_answers++;
+            has_entered = true;
+            break;
+          } else if (ev.key.code == sf::Keyboard::Dash) {
+            current_input.toggleSign();
+          } else if (ev.key.code == sf::Keyboard::BackSpace) {
+            current_input.erase();
           } else if (ev.key.code >= sf::Keyboard::Num0 &&
-                     ev.key.code <=
-                         sf::Keyboard::Num9) {  // Handle number input
-            int number_entered =
-                ev.key.code - sf::Keyboard::Num0;  // Get the entered number
-            current_input +=
-                std::to_string(number_entered);  // Append to current input
+                     ev.key.code <= sf::Keyboard::Num9) {
+            current_input.addDigit(ev.key.code - sf::Keyboard::Num0);
           } else {
             // Play wrong answer sound if the key is invalid
             if (wrong_audio.getStatus() != sf::Sound::Playing) {
@@ -181,7 +166,7 @@ void math_game::render() {
   // Display user input
   sf::Text input_text;
   input_text.setFont(font);
-  input_text.setString(current_input);  // Set input text
+  input_text.setString(current_input.text());
   input_text.setCharacterSize(40);
   input_text.setFillColor(sf::Color::Black);
   input_text.setPosition(680, 400);

@@ -7,6 +7,7 @@
 #include "../../src/anim.h"
 #include "../../src/catalog.h"
 #include "../../src/minigames/boxes.h"
+#include "../../src/minigames/math.h"
 #include "../../src/quote.h"
 #include "../../src/stats.h"
 
@@ -81,6 +82,28 @@ void quoteTests() {
         "expected the quote to hide after its display duration");
 }
 
+std::string typed(const std::string& keys) {
+  AnswerInput input;
+  for (char k : keys) {
+    if (k == '-') input.toggleSign();
+    else if (k == '<') input.erase();
+    else input.addDigit(k - '0');
+  }
+  std::optional<int> v = input.value();
+  return input.text() + "=" + (v ? std::to_string(*v) : "none");
+}
+
+void answerInputTests() {
+  check(typed("") == "=none", "[Math Input - Nothing Typed]", typed(""));
+  check(typed("-") == "-=none", "[Math Input - Lone Minus Is No Answer]", typed("-"));
+  check(typed("-42") == "-42=-42", "[Math Input - Negative]", typed("-42"));
+  check(typed("42-") == "-42=-42", "[Math Input - Minus After Digits]", typed("42-"));
+  check(typed("--5") == "5=5", "[Math Input - Double Minus Cancels]", typed("--5"));
+  check(typed("-5<<") == "=none", "[Math Input - Backspace Removes Sign Last]", typed("-5<<"));
+  check(typed("999999999999") == "999999999=999999999", "[Math Input - Digits Capped To Int]",
+        typed("999999999999"));
+}
+
 }  // namespace
 
 int main() {
@@ -90,6 +113,7 @@ int main() {
   sheetPlayerAdvancesFrames();
   sheetPlayerEatingHalvesLaterFrames();
   quoteTests();
+  answerInputTests();
 
   int unexpected = 0;
   for (const std::string& name : failures) {

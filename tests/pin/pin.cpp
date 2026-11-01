@@ -371,33 +371,41 @@ int loadGame(Recorder& rec) {
   return rec.finish();
 }
 
+// The math game seeds rand() with time() in its constructor, so replaying that
+// seed just before it opens yields the answers to the questions it will ask.
+std::vector<int> mathAnswers() {
+  std::srand(static_cast<unsigned>(pin_time(nullptr)));
+  std::vector<int> answers;
+  for (int i = 0; i < 5; ++i) {
+    int a = std::rand() % 100, b = std::rand() % 100;
+    char op = "+-*"[std::rand() % 3];
+    answers.push_back(op == '+' ? a + b : op == '-' ? a - b : a * b);
+  }
+  return answers;
+}
+
+// Queues the keys that type `answer` and press Enter.
+void typeKeys(int answer) {
+  if (answer < 0) pin::events().push_back(keyEvent(sf::Keyboard::Dash));
+  for (char d : std::to_string(std::abs(answer)))
+    pin::events().push_back(
+        keyEvent(static_cast<sf::Keyboard::Key>(sf::Keyboard::Num0 + (d - '0'))));
+  pin::events().push_back(keyEvent(sf::Keyboard::Enter));
+}
+
 int games(Recorder& rec) {
   Script s(rec);
   startNewGame(s, {"baby_avo", kIntroAvo, kIntroBaby});
-  // The math game seeds rand() with time() in its constructor, so replaying
-  // that seed here yields the questions it is about to ask.
   auto answers = std::make_shared<std::vector<int>>();
   s.then(kMain, 2, "math", [answers] {
-    std::srand(static_cast<unsigned>(pin_time(nullptr)));
-    for (int i = 0; i < 5; ++i) {
-      int a = std::rand() % 100, b = std::rand() % 100;
-      char op = "+-*"[std::rand() % 3];
-      answers->push_back(op == '+' ? a + b : op == '-' ? a - b : a * b);
-    }
+    *answers = mathAnswers();
     pin::mouse() = kMath;
     pin::events().push_back(mouseEvent(sf::Event::MouseButtonPressed, kMath.x, kMath.y));
   });
   // Intro animation runs 3 s (24 frames), then the rules page waits for Enter.
   s.key("Math Game", sf::Keyboard::Enter, "math: start", 25);
   auto typeAnswer = [&s, answers](int q, int offset, const std::string& label) {
-    s.then("Math Game", 2, label, [answers, q, offset] {
-      std::string digits = std::to_string(std::abs((*answers)[q] + offset));
-      if ((*answers)[q] + offset < 0) pin::events().push_back(keyEvent(sf::Keyboard::Dash));
-      for (char d : digits)
-        pin::events().push_back(
-            keyEvent(static_cast<sf::Keyboard::Key>(sf::Keyboard::Num0 + (d - '0'))));
-      pin::events().push_back(keyEvent(sf::Keyboard::Enter));
-    });
+    s.then("Math Game", 2, label, [answers, q, offset] { typeKeys((*answers)[q] + offset); });
   };
   typeAnswer(0, 0, "math: q1 right");
   s.keys("Math Game", {sf::Keyboard::Num7, sf::Keyboard::BackSpace, sf::Keyboard::A},
@@ -440,22 +448,43 @@ int menuCloseSpins(Recorder& rec) {
   return rec.finish();
 }
 
-// Known bug, pinned as-is: a lone "-" answer reaches std::stoi, which throws
-// (the real game aborts).
-int mathMinusCrash(Recorder& rec) {
+// Odd answers never crash the math game: a lone "-" is not an answer, Backspace
+// removes it, "--" cancels out, and digits past what an int holds are ignored. Score 4 of 5 shows the
+// lone "-" was not counted as an answer.
+int mathOddAnswers(Recorder& rec) {
   Script s(rec);
   s.capturing = false;
   startNewGame(s, {"adult_avo", kIntroAvo, kIntroAdult});
-  s.click(kMain, kMath.x, kMath.y, "math", 2)
-      .key("Math Game", sf::Keyboard::Enter, "math: start", 25)
-      .keys("Math Game", {sf::Keyboard::Dash, sf::Keyboard::Enter}, "math: answer -", 2);
-  bool threw = false;
-  try {
-    petpal_main();
-  } catch (const std::invalid_argument&) {
-    threw = true;
-  }
-  rec.check(threw && s.done(), "answering \"-\" no longer throws (bug fixed? update this pin)");
+  auto answers = std::make_shared<std::vector<int>>();
+  s.then(kMain, 2, "math", [answers] {
+    *answers = mathAnswers();
+    pin::mouse() = kMath;
+    pin::events().push_back(mouseEvent(sf::Event::MouseButtonPressed, kMath.x, kMath.y));
+  });
+  s.key("Math Game", sf::Keyboard::Enter, "math: start", 25)
+      .keys("Math Game", {sf::Keyboard::Dash, sf::Keyboard::Enter}, "math: answer -", 2)
+      .then("Math Game", 2, "math: q1 right after --", [answers] {
+        pin::events().push_back(keyEvent(sf::Keyboard::BackSpace));
+        pin::events().push_back(keyEvent(sf::Keyboard::Dash));
+        pin::events().push_back(keyEvent(sf::Keyboard::Dash));
+        typeKeys((*answers)[0]);
+      })
+      .then("Math Game", 2, "math: q2 twelve nines", [] {
+        for (int i = 0; i < 12; ++i) pin::events().push_back(keyEvent(sf::Keyboard::Num9));
+        pin::events().push_back(keyEvent(sf::Keyboard::Enter));
+      });
+  for (int q = 2; q < 5; ++q)
+    s.then("Math Game", 2, "math: q" + std::to_string(q + 1) + " right",
+           [answers, q] { typeKeys((*answers)[q]); });
+  s.key("Math Game", sf::Keyboard::Escape, "math: close results")
+      .close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: the game stopped early");
+  std::optional<SaveFile> save = readSave("pet_stats.txt");
+  rec.check(save && save->stats.iq == 50 + 4 * 5,
+            "math score 4 should add 20 IQ to 50, got IQ " +
+                (save ? std::to_string(save->stats.iq) : std::string("(no save)")));
   return rec.finish();
 }
 
@@ -571,7 +600,7 @@ int logic(Recorder& rec) {
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
     "journey_baby_ghost", "load_game",     "games",            "menu_close_spins",
-    "math_minus_crash"};
+    "math_odd_answers"};
 
 }  // namespace
 
@@ -594,7 +623,7 @@ int main(int argc, char** argv) {
     if (name == "load_game") return loadGame(rec);
     if (name == "games") return games(rec);
     if (name == "menu_close_spins") return menuCloseSpins(rec);
-    if (name == "math_minus_crash") return mathMinusCrash(rec);
+    if (name == "math_odd_answers") return mathOddAnswers(rec);
   } catch (const std::exception& e) {
     rec.fail(std::string("threw: ") + e.what() + " during step \"" + rec.step + "\"");
     return rec.finish();

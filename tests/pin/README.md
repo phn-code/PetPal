@@ -36,7 +36,8 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - Loading a save with all stats at 0, which shows the warnings.
 - The math game (intro, rules, five answers, results) and the box minigame (intro, every 25th frame of play, game over).
 - `logic`: `Stats` decay and caps; `readSave`; `findPet`; quote selection and `updateQuote`; minigame scoring by box height.
-- Three known bugs, pinned as current behavior: the quote never hides, closing the start menu leaves the game spinning (`menu_close_spins`), and a lone "-" answer crashes the math game (`math_minus_crash`).
+- `math_odd_answers`: a lone "-", a double "-" and a twelve-digit answer never crash the math game, and the score counts only real answers.
+- Two known bugs, pinned as current behavior: the quote never hides, and closing the start menu leaves the game spinning (`menu_close_spins`).
 
 The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window. Fixing one of these bugs updates its pin on purpose.
 
