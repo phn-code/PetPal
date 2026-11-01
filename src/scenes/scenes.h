@@ -13,11 +13,16 @@
 #include "../scene.h"
 #include "../stats.h"
 
-// The pet's foods as 150 px icons placed on the grid. Textures stay put so
-// the sprites can point at them.
+// The pet's foods as 150 px icons placed on the grid, for the shop and the
+// fridge. Textures stay put so the sprites can point at them.
 struct FoodIcons {
   std::vector<sf::Texture> textures;
   std::vector<sf::Sprite> sprites;
+
+  // The index of the food whose icon is under `point`, or -1.
+  int hit(sf::Vector2f point) const;
+  // Where a line of text `gap` px under food i's icon starts.
+  sf::Vector2f labelAt(std::size_t i, float gap) const;
 };
 FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid);
 

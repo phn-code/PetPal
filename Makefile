@@ -13,7 +13,7 @@ BUILD = build
 
 SOURCES = src/main.cpp src/catalog.cpp src/stats.cpp src/save.cpp src/anim.cpp src/quote.cpp \
           src/scenes/menu.cpp src/scenes/select.cpp src/scenes/home.cpp src/scenes/shop.cpp \
-          src/scenes/fridge.cpp src/scenes/info.cpp \
+          src/scenes/fridge.cpp src/scenes/food_icons.cpp src/scenes/info.cpp \
           src/minigames/boxes.cpp src/minigames/math.cpp
 HEADERS = $(wildcard src/*.h src/*/*.h)
 

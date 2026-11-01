@@ -2,24 +2,6 @@
 
 #include "scenes.h"
 
-FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid) {
-  FoodIcons icons;
-  icons.textures.resize(foods.size());
-  for (std::size_t i = 0; i < foods.size(); ++i) {
-    sf::Texture& texture = icons.textures[i];
-    if (!texture.loadFromFile(foods[i].icon))
-      std::cerr << "Error: " << foods[i].name << " image not found at " << foods[i].icon
-                << std::endl;
-    sf::Sprite sprite(texture);
-    sprite.setScale(150.f / texture.getSize().x, 150.f / texture.getSize().y);
-    int cell = static_cast<int>(i);
-    sprite.setPosition(grid.x + (cell % grid.cols) * grid.dx,
-                       grid.y + (cell / grid.cols) * grid.dy);
-    icons.sprites.push_back(sprite);
-  }
-  return icons;
-}
-
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
   sf::RenderWindow window(sf::VideoMode(1920, 1080), std::string(pet.title) + " Shop");
 
@@ -38,9 +20,8 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
   FoodIcons icons = loadFoodIcons(pet.foods, pet.shopGrid);
   std::vector<sf::Text> labels;
   for (std::size_t i = 0; i < pet.foods.size(); ++i) {
-    const sf::Sprite& sprite = icons.sprites[i];
-    labels.push_back(makeText(font, pet.shopLabelSize, sf::Color::Black, sprite.getPosition().x,
-                              sprite.getPosition().y + sprite.getGlobalBounds().height + 10,
+    sf::Vector2f at = icons.labelAt(i, 10);
+    labels.push_back(makeText(font, pet.shopLabelSize, sf::Color::Black, at.x, at.y,
                               std::string(pet.foods[i].name) + " - " +
                                   std::to_string(pet.foods[i].price) + " coins"));
   }
@@ -52,18 +33,17 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
       if (event.type != sf::Event::MouseButtonPressed) continue;
       sf::Vector2f click = toScene(window, event.mouseButton.x, event.mouseButton.y);
       noCoinsText.setString("");
-      for (std::size_t i = 0; i < pet.foods.size(); ++i) {
-        if (!icons.sprites[i].getGlobalBounds().contains(click)) continue;
-        const Food& food = pet.foods[i];
-        if (coins >= food.price) {
-          coins -= food.price;
-          pantry[food.name]++;
-          trolleyCount++;
-          coinsText.setString("Coins: " + std::to_string(coins));
-          trolleyText.setString("Trolley: " + std::to_string(trolleyCount));
-        } else {
-          noCoinsText.setString("NOT ENOUGH COINS");
-        }
+      int hit = icons.hit(click);
+      if (hit < 0) continue;
+      const Food& food = pet.foods[hit];
+      if (coins >= food.price) {
+        coins -= food.price;
+        pantry[food.name]++;
+        trolleyCount++;
+        coinsText.setString("Coins: " + std::to_string(coins));
+        trolleyText.setString("Trolley: " + std::to_string(trolleyCount));
+      } else {
+        noCoinsText.setString("NOT ENOUGH COINS");
       }
     }
 

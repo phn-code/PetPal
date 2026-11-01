@@ -36,7 +36,7 @@ make lint         # structural rules in tests/lint.py
 - `src/main.cpp` opens the main window and runs the menu, the pet picker, and the home screen.
 - `src/catalog.cpp` and `src/catalog.h` hold everything that differs between the four pets as a `PetSpec` table, plus each species' sound and quotes.
 - `src/scene.h` scales the 1920x1080 scene to any window size and maps clicks back into it.
-- `src/scenes/` has one file per window: start menu, pet picker, home, shop, fridge, and info.
+- `src/scenes/` has one file per window: start menu, pet picker, home, shop, fridge, and info. `food_icons.cpp` lays out the food grid the shop and fridge share and finds the food under a click.
 - `src/minigames/` has the box-catching game (`boxes.cpp`) and the math game (`math.cpp`).
 - `src/stats.cpp` holds the stats and their decay. `src/save.cpp` reads and writes the save file.
 - `src/anim.cpp` plays a sprite sheet. `src/quote.cpp` picks and shows the pet's quotes.
