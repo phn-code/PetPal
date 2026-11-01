@@ -1,5 +1,7 @@
 #include "catalog.h"
 
+#include <cstdlib>
+
 namespace {
 
 const std::vector<Food> kAdultAvoFoods = {
@@ -87,7 +89,7 @@ const PetSpec* findPet(const std::string& name) {
 const PetSpec& findPet(Species species, Stage stage) {
   for (const PetSpec& pet : kPets)
     if (pet.species == species && pet.stage == stage) return pet;
-  return kPets[0];
+  std::abort();  // kPets has every species and stage
 }
 
 const std::vector<std::string>& quotesFor(Species species) {
