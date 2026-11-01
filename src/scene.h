@@ -12,9 +12,11 @@
 const sf::Vector2f kScene(1920.f, 1080.f);
 
 inline sf::View sceneView(sf::Vector2u window) {
+  sf::View view(sf::FloatRect(0.f, 0.f, kScene.x, kScene.y));
+  // A minimized window can be 0x0. It shows nothing, so the plain view serves.
+  if (window.x == 0 || window.y == 0) return view;
   const float scale = std::min(window.x / kScene.x, window.y / kScene.y);
   const float width = kScene.x * scale / window.x, height = kScene.y * scale / window.y;
-  sf::View view(sf::FloatRect(0.f, 0.f, kScene.x, kScene.y));
   view.setViewport(sf::FloatRect((1 - width) / 2, (1 - height) / 2, width, height));
   return view;
 }

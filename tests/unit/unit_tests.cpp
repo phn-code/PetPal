@@ -1,7 +1,8 @@
 // Logic checks that need no window. Built with tests/pin/shim.h force-included,
 // so sf::Clock reads the fake clock (pin::now()) and nothing opens on screen.
-#include <fstream>
 #include <algorithm>
+#include <cmath>
+#include <fstream>
 #include <iostream>
 #include <set>
 #include <string>
@@ -12,6 +13,7 @@
 #include "../../src/minigames/math.h"
 #include "../../src/quote.h"
 #include "../../src/save.h"
+#include "../../src/scene.h"
 #include "../../src/stats.h"
 
 namespace {
@@ -197,6 +199,31 @@ void quoteDrawsItsCharacters() {
         "drew " + got.substr(0, got.find(':')) + ", wanted " + want.substr(0, want.find(':')));
 }
 
+std::string viewportOf(sf::Vector2u window) {
+  sf::FloatRect v = sceneView(window).getViewport();
+  char text[64];
+  std::snprintf(text, sizeof text, "%.4f %.4f %.4f %.4f", v.left, v.top, v.width, v.height);
+  return text;
+}
+
+// The scene keeps its shape: a 1470x802 window shows it about 1426 px wide with
+// 22 px bars each side. A minimized window can report 0x0, and its view must
+// still be a real rectangle rather than NaN.
+void sceneViewTests() {
+  check(viewportOf({1920, 1080}) == "0.0000 0.0000 1.0000 1.0000", "[Scene View - Full Size]",
+        viewportOf({1920, 1080}));
+  check(viewportOf({1470, 802}) == "0.0150 0.0000 0.9699 1.0000", "[Scene View - Letterbox]",
+        viewportOf({1470, 802}));
+  for (sf::Vector2u empty : {sf::Vector2u(0, 0), sf::Vector2u(0, 600), sf::Vector2u(800, 0)}) {
+    sf::FloatRect v = sceneView(empty).getViewport();
+    check(std::isfinite(v.left) && std::isfinite(v.top) && std::isfinite(v.width) &&
+              std::isfinite(v.height),
+          "[Scene View - Empty Window " + std::to_string(empty.x) + "x" +
+              std::to_string(empty.y) + "]",
+          viewportOf(empty));
+  }
+}
+
 }  // namespace
 
 int main() {
@@ -210,6 +237,7 @@ int main() {
   answerInputTests();
   quoteDrawsItsCharacters();
   readSaveTests();
+  sceneViewTests();
 
   for (const std::string& name : failures) std::cout << "FAIL " << name << std::endl;
   return failures.empty() ? 0 : 1;
