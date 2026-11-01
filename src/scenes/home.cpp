@@ -80,11 +80,10 @@ void drawBar(sf::RenderTarget& target, const sf::Font& font, const char* label, 
 
 void drawStats(sf::RenderTarget& target, const sf::Font& font, const Stats& stats,
                const sf::Texture& coin) {
-  // The first three bars truncate to whole pixels; the IQ bar does not.
   drawBar(target, font, "Health Bar: ", 250 * stats.health / 100, 20, 50);
   drawBar(target, font, "Sleep Bar: ", 250 * stats.sleep / 100, 350, 350);
   drawBar(target, font, "Hunger Bar: ", 250 * stats.hunger / 100, 970, 970);
-  drawBar(target, font, "IQ Bar: ", 250 * stats.iq / 100.0f, 650, 650);
+  drawBar(target, font, "IQ Bar: ", 250 * stats.iq / 100, 650, 650);
   target.draw(makeText(font, 44, sf::Color::Black, 1320, 20, std::to_string(stats.money)));
   sf::Sprite coinSign(coin);
   coinSign.setPosition(1240, 20);
