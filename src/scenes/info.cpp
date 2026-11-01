@@ -2,6 +2,7 @@
 
 void runInfo(sf::Font& font) {
   sf::RenderWindow window(sf::VideoMode(1920, 1080), "Information");
+  showWholeScene(window);
   const std::string info =
       "Welcome to the game! Start by choosing your pet: either a ghost "
       "or an avo, and select its age (adult or baby).\n\nNote its "

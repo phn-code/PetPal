@@ -28,7 +28,7 @@ const ButtonSpot kButtons[] = {
     {Button::Touch, nullptr, 650, 400, 250, 200},
 };
 
-Button hitTest(sf::Vector2i p) {
+Button hitTest(sf::Vector2f p) {
   for (const ButtonSpot& b : kButtons)
     if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) return b.button;
   return Button::None;
@@ -155,7 +155,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
         return 0;
       }
       if (event.type != sf::Event::MouseButtonPressed) continue;
-      switch (hitTest(sf::Mouse::getPosition(window))) {
+      switch (hitTest(toScene(window, event.mouseButton.x, event.mouseButton.y))) {
         case Button::Sleep:
           stats.sleep = 100;
           runActivity(window, font, art, pet, Activity::Sleep, quote, stats);

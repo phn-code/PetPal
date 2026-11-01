@@ -6,6 +6,7 @@
 #include "catalog.h"
 #include "quote.h"
 #include "save.h"
+#include "scene.h"
 #include "scenes/scenes.h"
 #include "stats.h"
 
@@ -25,6 +26,7 @@ int main() {
 
   sf::RenderWindow window(sf::VideoMode(1920, 1080), "My Virtual Pet");
   window.setFramerateLimit(60);
+  showWholeScene(window);
 
   // The quote timer runs from launch, so the first quote appears 10 s after the
   // menu did, not 10 s after the pet did.

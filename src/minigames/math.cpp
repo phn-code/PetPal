@@ -1,5 +1,7 @@
 #include "math.h"
 
+#include "../scene.h"
+
 #include <SFML/Audio.hpp>  // Include the Audio module
 #include <SFML/Graphics.hpp>
 
@@ -57,8 +59,8 @@ math_game::math_game() {
   total_time = 50.0;  // Set the total time for solving questions
   std::srand(static_cast<unsigned int>(
       std::time(0)));  // Seed for random number generation
-  game_window = new sf::RenderWindow(sf::VideoMode(1920, 1080),
-                                     "Math Game");  // Create game window
+  game_window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Math Game");
+  showWholeScene(*game_window);
   game_window->display();
 
   display_intro();       // Show the intro screen

@@ -14,6 +14,7 @@ int inStock(const Pantry& pantry, const std::string& food) {
 void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry) {
   const FridgeLayout& layout = pet.fridge;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
+  showWholeScene(window);
 
   sf::Texture fridgeTexture;
   if (!fridgeTexture.loadFromFile("assets/ui/fridge.png"))
@@ -40,12 +41,10 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
       if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
         window.close();
       if (event.type != sf::Event::MouseButtonPressed) continue;
-      sf::Vector2i click = sf::Mouse::getPosition(window);
+      sf::Vector2f click = toScene(window, event.mouseButton.x, event.mouseButton.y);
       message.setString("");
       for (std::size_t i = 0; i < pet.foods.size(); ++i) {
-        if (!icons.sprites[i].getGlobalBounds().contains(static_cast<float>(click.x),
-                                                         static_cast<float>(click.y)))
-          continue;
+        if (!icons.sprites[i].getGlobalBounds().contains(click)) continue;
         const std::string food = pet.foods[i].name;
         int left = inStock(pantry, food);
         if (left > 0) {

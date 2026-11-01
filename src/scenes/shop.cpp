@@ -23,6 +23,7 @@ FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid) {
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
   const ShopLayout& layout = pet.shop;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
+  showWholeScene(window);
 
   int trolleyCount = 0;
   sf::Text coinsText = makeText(font, 36, sf::Color::Black, 20, 20, "Coins: " + std::to_string(coins));
@@ -51,12 +52,10 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
       if (event.type != sf::Event::MouseButtonPressed) continue;
-      sf::Vector2i click = sf::Mouse::getPosition(window);
+      sf::Vector2f click = toScene(window, event.mouseButton.x, event.mouseButton.y);
       noCoinsText.setString("");
       for (std::size_t i = 0; i < pet.foods.size(); ++i) {
-        if (!icons.sprites[i].getGlobalBounds().contains(static_cast<float>(click.x),
-                                                         static_cast<float>(click.y)))
-          continue;
+        if (!icons.sprites[i].getGlobalBounds().contains(click)) continue;
         const Food& food = pet.foods[i];
         if (coins >= food.price) {
           coins -= food.price;

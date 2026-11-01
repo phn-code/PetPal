@@ -1,4 +1,6 @@
 #include "boxes.h"
+
+#include "../scene.h"
 // initialising window
 void mini_game::initialise_window() {
   game_video_mode.height = 1080;
@@ -7,6 +9,7 @@ void mini_game::initialise_window() {
       game_video_mode, "PetPal",
       sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
   game_window->setFramerateLimit(60);
+  showWholeScene(*game_window);
 }
 
 void mini_game::initialise_image() {
@@ -96,8 +99,8 @@ void mini_game::poll_events() {
       // and is clicked upon it will set the is_dragging boolean to truew
       case (sf::Event::MouseButtonPressed):
         if (ev.mouseButton.button == sf::Mouse::Left) {
-          if (slider_knob.getGlobalBounds().contains(ev.mouseButton.x,
-                                                     ev.mouseButton.y)) {
+          if (slider_knob.getGlobalBounds().contains(
+                  toScene(*game_window, ev.mouseButton.x, ev.mouseButton.y))) {
             is_dragging = true;
           }
         }
@@ -139,8 +142,7 @@ void mini_game::spawn_boxes() {
           (max_height_boxes - min_height_boxes);  // to calculate random height
   falling_boxes.setSize(sf::Vector2f(50.f, random_height_boxes));
   falling_boxes.setPosition(
-      static_cast<float>(rand() % static_cast<int>(game_window->getSize().x -
-                                                   falling_boxes.getSize().x)),
+      static_cast<float>(rand() % static_cast<int>(kScene.x - falling_boxes.getSize().x)),
       0.0);
   falling_boxes.setFillColor(sf::Color(0, 0, 128));
   boxes.push_back(falling_boxes);
@@ -187,15 +189,15 @@ void mini_game::update_boxes() {
 
 void mini_game::initialise_slider() {
   slider_track.setSize(sf::Vector2f(
-      sf::Vector2f(static_cast<float>(game_window->getSize().x), 5.0f)));
+      sf::Vector2f(kScene.x, 5.0f)));
   slider_track.setPosition(0, 762);
   slider_track.setFillColor(sf::Color::Black);
 }
 
 void mini_game::update_slider() {
   if (is_dragging) {
-    float position_of_mouse =
-        static_cast<float>(sf::Mouse::getPosition(*game_window).x);
+    sf::Vector2i mouse = sf::Mouse::getPosition(*game_window);
+    float position_of_mouse = toScene(*game_window, mouse.x, mouse.y).x;
     float position_of_knob =
         position_of_mouse - (slider_knob.getGlobalBounds().width / 2);
     position_of_knob = std::max(
@@ -241,7 +243,7 @@ void mini_game::initialise_fonts() {
   game_ui_text.setFont(game_font);
   game_ui_text.setCharacterSize(65);
   game_ui_text.setFillColor(sf::Color::Black);
-  game_ui_text.setPosition(10, game_window->getSize().y - 70);
+  game_ui_text.setPosition(10, kScene.y - 70);
   game_ui_text.setString("NONE");
 }
 

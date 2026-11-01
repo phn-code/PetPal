@@ -1,7 +1,7 @@
 #include "scenes.h"
 
 MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font, bool canLoad) {
-  sf::Vector2u size = window.getSize();
+  const sf::Vector2f size = kScene;
 
   sf::Text newGame("New Game", font, 70);
   newGame.setFillColor(sf::Color::Black);
@@ -31,7 +31,7 @@ MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font, bool canLoad) {
       }
       if (event.type == sf::Event::MouseButtonPressed &&
           event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2f mouse(sf::Mouse::getPosition(window));
+        sf::Vector2f mouse = toScene(window, event.mouseButton.x, event.mouseButton.y);
         if (newGame.getGlobalBounds().contains(mouse)) return MenuChoice::NewGame;
         if (loadGame.getGlobalBounds().contains(mouse)) {
           if (canLoad) return MenuChoice::LoadGame;

@@ -473,6 +473,38 @@ int saveWrites(Recorder& rec) {
   return rec.finish();
 }
 
+// On a screen too small for 1920x1080, as on a 13-inch MacBook, every window
+// opens at 1470x802 and shows the whole scene scaled down. Clicks land where
+// the scaled scene draws each button.
+int smallScreen(Recorder& rec) {
+  pin::screen() = sf::Vector2u(1470, 802);
+  auto px = [](sf::Vector2i scene) {
+    return sf::Vector2i(scene.x * 1470 / 1920, scene.y * 802 / 1080);
+  };
+  const sf::Vector2i steak = px({398, 203}), menuNew = px(kMenuNew), avo = px(kIntroAvo),
+                     adult = px(kIntroAdult), shop = px(kShop), eat = px(kEat),
+                     info = px(kInfo), fridgeSteak = px({760, 340});
+  Script s(rec);
+  s.click(kMain, menuNew.x, menuNew.y, "menu: new game")
+      .click(kMain, avo.x, avo.y, "intro: pick avo")
+      .click(kMain, adult.x, adult.y, "intro: pick adult")
+      .click(kMain, shop.x, shop.y, "shop", 2)
+      .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
+      .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
+      .close("Adult Avo Shopping", "shop: close")
+      .click(kMain, eat.x, eat.y, "eat")
+      .click("Eating Adult Avo", fridgeSteak.x, fridgeSteak.y, "eat: steak")
+      .key("Eating Adult Avo", sf::Keyboard::Escape, "eat: close")
+      .click(kMain, info.x, info.y, "info", kAfterAnimation)
+      .key("Information", sf::Keyboard::B, "info: close")
+      .close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish at step \"" + rec.step + "\": a click missed");
+  rec.checkText("save.txt", readFile("pet_stats.txt"));
+  return rec.finish();
+}
+
 // A save the game cannot read counts as no save: Load shows "No Previous Games
 // Found" and a new game still starts.
 int badSave(Recorder& rec) {
@@ -690,7 +722,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "small_screen",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -716,6 +748,7 @@ int main(int argc, char** argv) {
     if (name == "close_quits") return closeQuits(rec);
     if (name == "bad_save") return badSave(rec);
     if (name == "save_writes") return saveWrites(rec);
+    if (name == "small_screen") return smallScreen(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);
   } catch (const std::exception& e) {

@@ -18,13 +18,13 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
 
   sf::Text title("Choose a Pet :)", font, 80);
   title.setFillColor(sf::Color::Black);
-  title.setPosition((window.getSize().x - title.getGlobalBounds().width) / 2, 50);
+  title.setPosition((kScene.x - title.getGlobalBounds().width) / 2, 50);
   sf::Text avoText = makeText(font, 50, sf::Color::Black, 300, 560, "Avo");
   sf::Text ghostText = makeText(font, 50, sf::Color::Black, 900, 560, "Ghost");
   sf::Text adultText =
-      makeText(font, 40, sf::Color::Black, (window.getSize().x / 2) - 100, 700, "Adult");
+      makeText(font, 40, sf::Color::Black, kScene.x / 2 - 100, 700, "Adult");
   sf::Text babyText =
-      makeText(font, 40, sf::Color::Black, (window.getSize().x / 2) + 50, 700, "Baby");
+      makeText(font, 40, sf::Color::Black, kScene.x / 2 + 50, 700, "Baby");
 
   std::optional<Species> species;
   while (window.isOpen()) {
@@ -47,14 +47,14 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
         return nullptr;
       }
       if (event.type != sf::Event::MouseButtonPressed) continue;
-      sf::Vector2i click = sf::Mouse::getPosition(window);
-      if (avoButton.getGlobalBounds().contains(click.x, click.y)) {
+      sf::Vector2f click = toScene(window, event.mouseButton.x, event.mouseButton.y);
+      if (avoButton.getGlobalBounds().contains(click)) {
         species = Species::Avo;
-      } else if (ghostButton.getGlobalBounds().contains(click.x, click.y)) {
+      } else if (ghostButton.getGlobalBounds().contains(click)) {
         species = Species::Ghost;
-      } else if (species && adultText.getGlobalBounds().contains(click.x, click.y)) {
+      } else if (species && adultText.getGlobalBounds().contains(click)) {
         return &findPet(*species, Stage::Adult);
-      } else if (species && babyText.getGlobalBounds().contains(click.x, click.y)) {
+      } else if (species && babyText.getGlobalBounds().contains(click)) {
         return &findPet(*species, Stage::Baby);
       }
     }

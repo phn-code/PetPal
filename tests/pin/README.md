@@ -16,7 +16,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 
 `shim.h` is force-included ahead of every production file. It replaces four SFML pieces and `time()` with scripted fakes:
 
-- `sf::RenderWindow` becomes an offscreen 1920x1080 render texture. Every `display()` is a captured frame.
+- `sf::RenderWindow` becomes an offscreen render texture of the requested size, shrunk to fit `pin::screen()` the way macOS shrinks a window that does not fit the screen. Every `display()` is a captured frame.
 - `sf::Clock` and `time()` read a fake clock that advances 1/8 s per frame.
 - `sf::Mouse` and window events come from the scenario script.
 - `sf::Music` is silent.
@@ -40,6 +40,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - `math_escape_intro`: Escape during the math intro returns to the pet.
 - `close_quits`: closing the window on the start menu or the pet picker quits without writing a save.
 - `bad_save`: an unreadable save counts as no save, and a new game still starts.
+- `small_screen`: on a 1470x802 screen every window shows the whole 1920x1080 scene scaled down, and clicks on the scaled buttons land.
 - `save_writes`: the save is written only when what it holds changes, and replaced whole rather than rewritten in place.
 
 The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window.
@@ -47,5 +48,5 @@ The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `s
 ## What is not pinned
 
 - Audio. The pin never plays any sound.
-- Real-window behavior: OS scaling, a screen smaller than 1920x1080, frame pacing, and real mouse coordinates.
+- Real-window behavior: resizing a window, Retina scaling, frame pacing, and real mouse coordinates.
 - Portability. The goldens depend on macOS `rand()`, this SFML version, and its font rasterizer, so expect mismatches on other platforms. The hash uses macOS CommonCrypto.

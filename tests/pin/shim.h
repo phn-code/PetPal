@@ -49,6 +49,12 @@ inline sf::Vector2i& mouse() {
   static sf::Vector2i m;
   return m;
 }
+// The largest window the screen allows. macOS shrinks a window that does not
+// fit to this size when it opens, and SFML's default view shrinks with it.
+inline sf::Vector2u& screen() {
+  static sf::Vector2u s(1920, 1080);
+  return s;
+}
 inline std::function<void(sf::PinWindow&)>& onDisplay() {
   static std::function<void(sf::PinWindow&)> f;
   return f;
@@ -68,7 +74,8 @@ class PinWindow : public RenderTexture {
   }
   void create(VideoMode mode, const String& title, Uint32 = Style::Default,
               const ContextSettings& = ContextSettings()) {
-    if (!RenderTexture::create(mode.width, mode.height))
+    if (!RenderTexture::create(std::min(mode.width, pin::screen().x),
+                               std::min(mode.height, pin::screen().y)))
       throw std::runtime_error("pin: RenderTexture::create failed");
     title_ = title.toAnsiString();
     open_ = true;

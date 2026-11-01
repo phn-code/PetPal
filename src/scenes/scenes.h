@@ -10,6 +10,7 @@
 #include "../catalog.h"
 #include "../quote.h"
 #include "../save.h"
+#include "../scene.h"
 #include "../stats.h"
 
 // The pet's foods as 150 px icons placed on the grid. Textures stay put so

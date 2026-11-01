@@ -1,5 +1,7 @@
 #include "quote.h"
 
+#include "scene.h"
+
 #include <cstdlib>
 #include <ctime>
 #include <vector>
@@ -53,6 +55,6 @@ void drawQuote(sf::RenderTarget& target, const sf::Font& font, const Quote& quot
   quoteText.setFillColor(sf::Color::Black);
   sf::FloatRect bounds = quoteText.getLocalBounds();
   quoteText.setOrigin(bounds.left + bounds.width / 2, 0);
-  quoteText.setPosition(target.getSize().x / 2, 280);
+  quoteText.setPosition(kScene.x / 2, 280);
   target.draw(quoteText);
 }
