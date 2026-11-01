@@ -1,0 +1,4 @@
+adult_avo 90 90 90 45 150
+
+Boba 1
+Fried Rice 1

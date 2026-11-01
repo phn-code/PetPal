@@ -1,0 +1,3 @@
+adult_avo 25 25 100 50 0
+
+Steak 1

@@ -1,0 +1,16 @@
+#!/bin/sh
+# Rejects a commit that changes a file under tests/golden unless the message
+# names that file. make check installs this hook (git config core.hooksPath).
+msg=$(grep -v '^#' "$1")
+missing=""
+for f in $(git diff --cached --name-only -- tests/golden); do
+  case "$msg" in
+    *"$(basename "$f")"*) ;;
+    *) missing="$missing $f" ;;
+  esac
+done
+[ -z "$missing" ] && exit 0
+echo "commit-msg: this commit changes golden files its message does not name:" >&2
+for f in $missing; do echo "  $f" >&2; done
+echo "Name each one in the body and say why its frames or save changed." >&2
+exit 1
