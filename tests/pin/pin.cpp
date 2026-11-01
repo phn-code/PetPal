@@ -432,19 +432,28 @@ int games(Recorder& rec) {
   return rec.finish();
 }
 
-// Known bug, pinned as-is: closing the window on the start menu is treated as
-// "new game" and the intro loop then spins forever on the closed window.
-int menuCloseSpins(Recorder& rec) {
-  Script s(rec, 500);
-  s.capturing = false;
-  s.close(kMain, "menu: close window");
-  bool spun = false;
-  try {
-    petpal_main();
-  } catch (const RunawayLoop&) {
-    spun = true;
-  }
-  rec.check(spun, "closing the start menu no longer spins (bug fixed? update this pin)");
+// Closing the window on the start menu or the pet picker quits, and leaves no
+// save behind.
+int closeQuits(Recorder& rec) {
+  auto quitsAfter = [&rec](const std::string& where, std::function<void(Script&)> steps) {
+    Script s(rec, 500);
+    s.capturing = false;
+    steps(s);
+    int code = -1;
+    try {
+      code = petpal_main();
+    } catch (const RunawayLoop&) {
+      rec.fail("closing the " + where + " left the game running");
+    }
+    rec.check(code == 0, "closing the " + where + ": main returned " + std::to_string(code));
+    rec.check(s.done(), "closing the " + where + ": script did not finish");
+    rec.check(!std::ifstream("pet_stats.txt"), "closing the " + where + " wrote a save");
+  };
+  quitsAfter("start menu", [](Script& s) { s.close(kMain, "menu: close window"); });
+  quitsAfter("pet picker", [](Script& s) {
+    s.click(kMain, kMenuNew.x, kMenuNew.y, "menu: new game")
+        .close(kMain, "picker: close window");
+  });
   return rec.finish();
 }
 
@@ -613,7 +622,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "menu_close_spins",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -636,7 +645,7 @@ int main(int argc, char** argv) {
     if (name.rfind("journey_", 0) == 0) return journey(rec, name.substr(8));
     if (name == "load_game") return loadGame(rec);
     if (name == "games") return games(rec);
-    if (name == "menu_close_spins") return menuCloseSpins(rec);
+    if (name == "close_quits") return closeQuits(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);
   } catch (const std::exception& e) {

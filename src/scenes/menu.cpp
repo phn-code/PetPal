@@ -2,7 +2,7 @@
 
 #include "scenes.h"
 
-bool runMenu(sf::RenderWindow& window, sf::Font& font) {
+MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font) {
   sf::Vector2u size = window.getSize();
 
   sf::Text newGame("New Game", font, 70);
@@ -29,16 +29,14 @@ bool runMenu(sf::RenderWindow& window, sf::Font& font) {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         window.close();
-        // Known bug (phase 3): closing here reads as "New Game", and the pet
-        // picker then spins on the closed window.
-        return true;
+        return MenuChoice::Quit;
       }
       if (event.type == sf::Event::MouseButtonPressed &&
           event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2f mouse(sf::Mouse::getPosition(window));
-        if (newGame.getGlobalBounds().contains(mouse)) return true;
+        if (newGame.getGlobalBounds().contains(mouse)) return MenuChoice::NewGame;
         if (loadGame.getGlobalBounds().contains(mouse)) {
-          if (std::ifstream("pet_stats.txt")) return false;
+          if (std::ifstream("pet_stats.txt")) return MenuChoice::LoadGame;
           showNoGames = true;
         }
       }
@@ -50,5 +48,5 @@ bool runMenu(sf::RenderWindow& window, sf::Font& font) {
     if (showNoGames) window.draw(noGames);
     window.display();
   }
-  return false;
+  return MenuChoice::Quit;
 }

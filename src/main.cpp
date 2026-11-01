@@ -31,7 +31,9 @@ int main() {
   Quote quote;
   const PetSpec* pet = nullptr;
   Stats stats;
-  if (runMenu(window, font)) {
+  MenuChoice choice = runMenu(window, font);
+  if (choice == MenuChoice::Quit) return 0;
+  if (choice == MenuChoice::NewGame) {
     pet = runSelect(window, font);
     window.display();  // the picker's last frame shows twice, as pinned
     if (!pet) return 0;

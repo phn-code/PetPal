@@ -30,8 +30,9 @@ inline sf::Text makeText(const sf::Font& font, unsigned size, sf::Color color, f
   return t;
 }
 
-// True for a new game, false to load pet_stats.txt.
-bool runMenu(sf::RenderWindow& window, sf::Font& font);
+enum class MenuChoice { NewGame, LoadGame, Quit };
+
+MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font);
 
 // The pet picker. Null when the window was closed instead.
 const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font);

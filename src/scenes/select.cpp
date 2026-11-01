@@ -27,8 +27,7 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
       makeText(font, 40, sf::Color::Black, (window.getSize().x / 2) + 50, 700, "Baby");
 
   std::optional<Species> species;
-  // Keeps drawing after the window closes (known bug, phase 3; see runMenu).
-  for (;;) {
+  while (window.isOpen()) {
     window.clear(sf::Color(230, 230, 220));
     window.draw(avoButton);
     window.draw(ghostButton);
@@ -60,4 +59,5 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
       }
     }
   }
+  return nullptr;
 }

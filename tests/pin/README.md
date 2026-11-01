@@ -38,7 +38,8 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - `logic`: `Stats` decay and caps; `readSave`; `findPet`; quote selection and `updateQuote`; minigame scoring by box height.
 - `math_odd_answers`: a lone "-", a double "-" and a twelve-digit answer never crash the math game, and the score counts only real answers.
 - `math_escape_intro`: Escape during the math intro returns to the pet.
-- Two known bugs, pinned as current behavior: the quote never hides, and closing the start menu leaves the game spinning (`menu_close_spins`).
+- `close_quits`: closing the window on the start menu or the pet picker quits without writing a save.
+- One known bug, pinned as current behavior: the quote never hides.
 
 The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window. Fixing one of these bugs updates its pin on purpose.
 
