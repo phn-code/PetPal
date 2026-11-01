@@ -266,7 +266,7 @@ void math_game::display_intro() {
     while (game_window->pollEvent(event)) {
       if (event.type == sf::Event::Closed ||
           event.type == sf::Event::KeyPressed &&
-              ev.key.code == sf::Keyboard::Escape) {
+              event.key.code == sf::Keyboard::Escape) {
         game_window->close();  // Close the window on close event
       }
     }

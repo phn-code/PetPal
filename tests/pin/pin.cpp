@@ -488,6 +488,20 @@ int mathOddAnswers(Recorder& rec) {
   return rec.finish();
 }
 
+// Escape during the math intro closes the math game and returns to the pet.
+int mathEscapeIntro(Recorder& rec) {
+  Script s(rec, 300);
+  s.capturing = false;
+  startNewGame(s, {"adult_avo", kIntroAvo, kIntroAdult});
+  s.click(kMain, kMath.x, kMath.y, "math", 2)
+      .key("Math Game", sf::Keyboard::Escape, "math: escape during intro", 2)
+      .close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: Escape did not leave the math intro");
+  return rec.finish();
+}
+
 int logic(Recorder& rec) {
   auto show = [](const Stats& s) {
     return std::to_string(s.health) + "/" + std::to_string(s.sleep) + "/" +
@@ -600,7 +614,7 @@ int logic(Recorder& rec) {
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
     "journey_baby_ghost", "load_game",     "games",            "menu_close_spins",
-    "math_odd_answers"};
+    "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
 
@@ -624,6 +638,7 @@ int main(int argc, char** argv) {
     if (name == "games") return games(rec);
     if (name == "menu_close_spins") return menuCloseSpins(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
+    if (name == "math_escape_intro") return mathEscapeIntro(rec);
   } catch (const std::exception& e) {
     rec.fail(std::string("threw: ") + e.what() + " during step \"" + rec.step + "\"");
     return rec.finish();
