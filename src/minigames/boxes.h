@@ -16,7 +16,7 @@ class mini_game {
 
   // variables for boxes
   int maximum_boxes;   // how many boxes can the game generate in total
-  int boxes_one_time;  // how many boxes on the screen at once
+  std::size_t boxes_one_time;  // how many boxes on the screen at once
   float min_height_boxes;
   float max_height_boxes;
   float box_spawn_timer;

@@ -305,16 +305,16 @@ const sf::Vector2i kMenuNew(960, 440), kMenuLoad(960, 600);
 const sf::Vector2i kIntroAvo(330, 430), kIntroGhost(1000, 480), kIntroAdult(900, 720),
     kIntroBaby(1050, 720);
 
-void startNewGame(Script& s, const PetCase& c) {
+void startNewGame(Script& s, sf::Vector2i species, sf::Vector2i age) {
   s.click(kMain, kMenuLoad.x, kMenuLoad.y, "menu: load with no save")
       .click(kMain, kMenuNew.x, kMenuNew.y, "menu: new game")
-      .click(kMain, c.species.x, c.species.y, "intro: pick species")
-      .click(kMain, c.age.x, c.age.y, "intro: pick age");
+      .click(kMain, species.x, species.y, "intro: pick species")
+      .click(kMain, age.x, age.y, "intro: pick age");
 }
 
 int runPetJourney(Recorder& rec, const PetCase& c) {
   Script s(rec);
-  startNewGame(s, c);
+  startNewGame(s, c.species, c.age);
   s.click(kMain, kSleep.x, kSleep.y, "sleep", 2)
       .click(kMain, kShower.x, kShower.y, "shower", kAfterAnimation)
       .click(kMain, kMedicine.x, kMedicine.y, "medicine", kAfterAnimation)
@@ -404,7 +404,7 @@ void typeKeys(int answer) {
 
 int games(Recorder& rec) {
   Script s(rec);
-  startNewGame(s, {"baby_avo", kIntroAvo, kIntroBaby});
+  startNewGame(s, kIntroAvo, kIntroBaby);
   auto answers = std::make_shared<std::vector<int>>();
   s.then(kMain, 2, "math", [answers] {
     *answers = mathAnswers();
@@ -446,7 +446,7 @@ int games(Recorder& rec) {
 int saveWrites(Recorder& rec) {
   Script s(rec);
   s.capturing = false;
-  startNewGame(s, {"baby_avo", kIntroAvo, kIntroBaby});
+  startNewGame(s, kIntroAvo, kIntroBaby);
   auto stats = [] {
     std::optional<SaveFile> save = readSave("pet_stats.txt");
     return save ? std::to_string(save->stats.health) + "/" + std::to_string(save->stats.sleep)
@@ -544,7 +544,7 @@ int badSave(Recorder& rec) {
   std::ofstream("pet_stats.txt") << "adult_avo 1 2 three\n";
   Script s(rec);
   s.capturing = false;
-  startNewGame(s, {"baby_ghost", kIntroGhost, kIntroBaby});
+  startNewGame(s, kIntroGhost, kIntroBaby);
   s.close(kMain, "quit", 2);
   int code = petpal_main();
   rec.check(code == 0, "main returned " + std::to_string(code));
@@ -585,7 +585,7 @@ int closeQuits(Recorder& rec) {
 int mathOddAnswers(Recorder& rec) {
   Script s(rec);
   s.capturing = false;
-  startNewGame(s, {"adult_avo", kIntroAvo, kIntroAdult});
+  startNewGame(s, kIntroAvo, kIntroAdult);
   auto answers = std::make_shared<std::vector<int>>();
   s.then(kMain, 2, "math", [answers] {
     *answers = mathAnswers();
@@ -623,7 +623,7 @@ int mathOddAnswers(Recorder& rec) {
 int mathEscapeIntro(Recorder& rec) {
   Script s(rec, 300);
   s.capturing = false;
-  startNewGame(s, {"adult_avo", kIntroAvo, kIntroAdult});
+  startNewGame(s, kIntroAvo, kIntroAdult);
   s.click(kMain, kMath.x, kMath.y, "math", 2)
       .key("Math Game", sf::Keyboard::Escape, "math: escape during intro", 2)
       .close(kMain, "quit", 2);

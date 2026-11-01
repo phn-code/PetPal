@@ -106,8 +106,8 @@ void math_game::run() {
       while (game_window->pollEvent(ev)) {  // Handle events
         // Close the window on close event or Escape key
         if (ev.type == sf::Event::Closed ||
-            ev.type == sf::Event::KeyPressed &&
-                ev.key.code == sf::Keyboard::Escape) {
+            (ev.type == sf::Event::KeyPressed &&
+                 ev.key.code == sf::Keyboard::Escape)) {
           game_window->close();
         }
         // Handle key presses
@@ -235,8 +235,8 @@ void math_game::display_results() {
     sf::Event event;
     while (game_window->pollEvent(event)) {
       if (event.type == sf::Event::Closed ||
-          event.type == sf::Event::KeyPressed &&
-              event.key.code == sf::Keyboard::Escape) {
+          (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Escape)) {
         game_window->close();  // Close the window on close event
       }
       if (event.type == sf::Event::KeyPressed &&
@@ -265,8 +265,8 @@ void math_game::display_intro() {
     sf::Event event;
     while (game_window->pollEvent(event)) {
       if (event.type == sf::Event::Closed ||
-          event.type == sf::Event::KeyPressed &&
-              event.key.code == sf::Keyboard::Escape) {
+          (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Escape)) {
         game_window->close();  // Close the window on close event
       }
     }
@@ -297,8 +297,8 @@ void math_game::rules_page() {
     bool escape = false;                     // Flag for exit condition
     while (game_window->pollEvent(event)) {  // Handle events
       if (event.type == sf::Event::Closed ||
-          event.type == sf::Event::KeyPressed &&
-              event.key.code == sf::Keyboard::Escape) {
+          (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Escape)) {
         game_window->close();  // Close the window on close event
       }
       if (event.type == sf::Event::KeyPressed &&

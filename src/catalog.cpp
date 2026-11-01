@@ -23,6 +23,24 @@ const std::vector<Food> kBabyGhostFoods = {{"Baby Milk", 50, "assets/food/milk.p
 const ShopLayout kAdultShop = {"Adult Avo Shopping", {323, 128, 350, 400, 3}, 34, "NOT ENOUGH COINS"};
 const Grid kAdultFridgeGrid = {685, 265, 200, 200, 3};
 
+const std::vector<std::string> kAvoQuotes = {
+    "What did the avocado say to the toast? You’re my butter half!",
+    "If life gives you avocados, make guacamole!",
+    "I’m just an avocado, living in a toast world.",
+    "I’m not a regular avocado, I’m a cool avocado.",
+    "You guac my world!",
+    "An avocado a day keeps the bad vibes away.",
+    "How does an avocado propose? With a guac ring!",
+    "Just avocado-ing with the flow!"};
+
+const std::vector<std::string> kGhostQuotes = {
+    "I don’t mean to scare you, but I am just here for the boos!",
+    "Ghosts are just like us—constantly looking for a good haunt!",
+    "If you think I'm scary now, you should see me before my coffee!",
+    "What do you call a ghost that tells jokes? A pun-derworld spirit!",
+    "Boo! Just kidding. I’m just here for the snacks.",
+    "Why dont ghosts like rain? Because it dampens their spirits!"};
+
 const PetSpec kPets[] = {
     {"adult_avo", Species::Avo, Stage::Adult, "assets/pets/adult_avo/idle.png",
      {{"assets/pets/adult_avo/sleep.png", 32, 32, 4, 3, 0.8f},
@@ -70,6 +88,10 @@ const PetSpec& findPet(Species species, Stage stage) {
   for (const PetSpec& pet : kPets)
     if (pet.species == species && pet.stage == stage) return pet;
   return kPets[0];
+}
+
+const std::vector<std::string>& quotesFor(Species species) {
+  return species == Species::Avo ? kAvoQuotes : kGhostQuotes;
 }
 
 const char* soundPath(Species species) {

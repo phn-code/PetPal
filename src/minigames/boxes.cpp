@@ -210,7 +210,7 @@ void mini_game::update_slider() {
 }
 
 void mini_game::update_points() {
-  for (int i = 0; i < boxes.size(); i++) {
+  for (int i = 0; i < static_cast<int>(boxes.size()); i++) {
     if (slider_knob.getGlobalBounds().intersects(boxes[i].getGlobalBounds())) {
       // getting the height of the box falling
       float individual_height = boxes[i].getSize().y;

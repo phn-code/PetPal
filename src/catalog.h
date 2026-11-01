@@ -60,3 +60,4 @@ struct PetSpec {
 const PetSpec* findPet(const std::string& name);
 const PetSpec& findPet(Species, Stage);
 const char* soundPath(Species);
+const std::vector<std::string>& quotesFor(Species);
