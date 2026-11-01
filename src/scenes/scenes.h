@@ -49,3 +49,6 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry);
 bool runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry);
 
 void runInfo(sf::Font& font);
+
+// The box-catching game. Returns the coins won.
+int runBoxes(sf::Font& font);

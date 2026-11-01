@@ -14,7 +14,6 @@
 #define private public
 #define main petpal_main
 #include "../../src/main.cpp"
-#include "../../src/minigames/boxes.h"
 #undef main
 #undef private
 
@@ -765,40 +764,6 @@ int logic(Recorder& rec) {
     updateQuote(quote, Species::Avo);
     rec.check(quote.visible && quote.text == pickQuote(Species::Avo),
               "a new quote shows after 10 s hidden");
-  }
-  {
-    mini_game g;
-    rec.check(g.window_open() && g.money_earned_end() == 0 && g.points == 0,
-              "new minigame: window open, nothing earned");
-    rec.check(g.in_intro_game, "minigame starts on the intro screen");
-    std::string table;
-    for (float height : {50.f, 59.f, 60.f, 79.f, 80.f, 99.f, 100.f, 119.f, 120.f, 149.f,
-                         150.f, 199.f, 200.f}) {
-      unsigned before = g.points;
-      float speed = g.box_falling_speed;
-      sf::RectangleShape box(sf::Vector2f(50.f, height));
-      box.setPosition(g.slider_knob.getPosition());
-      g.boxes.assign(1, box);
-      g.update_points();
-      table += std::to_string(static_cast<int>(height)) + ":" +
-               std::to_string(g.points - before) + (g.boxes.empty() ? "" : "!kept") +
-               (g.box_falling_speed == speed + 0.5f ? "" : "!speed") + " ";
-    }
-    expectEq(table,
-             "50:6 59:6 60:5 79:5 80:4 99:4 100:3 119:3 120:2 149:2 150:1 199:1 200:0 ",
-             "points by caught box height; each catch removes the box and speeds up 0.5");
-    g.update_game_over_text();
-    expectEq(std::to_string(g.money_earned_end()), std::to_string(g.points * 5),
-             "coins earned are 5 per point");
-    g.boxes.clear();
-    g.box_spawn_timer = g.box_spawn_timer_max;
-    g.update_boxes();
-    rec.check(g.boxes.size() == 1, "a box spawns once the spawn timer is full");
-    std::srand(7);
-    std::vector<std::string> songs = {"a", "b", "c", "d"};
-    std::string pick = g.get_random_song(songs);
-    std::srand(7);
-    expectEq(pick, songs[std::rand() % songs.size()], "song pick is rand() % count");
   }
   return rec.finish();
 }

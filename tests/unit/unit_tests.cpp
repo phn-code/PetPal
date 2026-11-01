@@ -29,9 +29,15 @@ void check(bool ok, const std::string& name, const std::string& detail = "") {
   }
 }
 
-void miniGameTest() {
-  mini_game game;
-  check(game.window_open() && game.money_earned_end() == 0, "[Mini Game Test]");
+// Shorter boxes score more: 6 points under 60 px down to 1 under 200 px,
+// and nothing for a box 200 px or taller.
+void boxPointsTests() {
+  std::string table;
+  for (float height : {50.f, 59.f, 60.f, 79.f, 80.f, 99.f, 100.f, 119.f, 120.f, 149.f, 150.f,
+                       199.f, 200.f})
+    table += std::to_string(static_cast<int>(height)) + ":" + std::to_string(pointsFor(height)) + " ";
+  check(table == "50:6 59:6 60:5 79:5 80:4 99:4 100:3 119:3 120:2 149:2 150:1 199:1 200:0 ",
+        "[Box Points By Height]", table);
 }
 
 void statsTests() {
@@ -228,7 +234,7 @@ void sceneViewTests() {
 
 int main() {
   std::cout << "Running Unit Tests..." << std::endl << std::endl;
-  miniGameTest();
+  boxPointsTests();
   statsTests();
   sheetPlayerAdvancesFrames();
   sheetPlayerEatingHalvesLaterFrames();

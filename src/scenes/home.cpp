@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "../anim.h"
-#include "../minigames/boxes.h"
 #include "../minigames/math.h"
 #include "../save.h"
 #include "scenes.h"
@@ -180,12 +179,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
           break;
         case Button::Game: {
           music.pause();
-          mini_game game;
-          while (game.window_open()) {
-            game.update();
-            game.render();
-          }
-          stats.money += game.money_earned_end();
+          stats.money += runBoxes(font);
           music.play();
           break;
         }
