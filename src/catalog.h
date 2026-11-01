@@ -33,28 +33,17 @@ struct Grid {
   int cols;
 };
 
-struct ShopLayout {
-  const char* title;
-  Grid grid;
-  unsigned labelSize;
-  const char* noCoinsText;
-};
-
-struct FridgeLayout {
-  const char* title;
-  Grid grid;
-  float labelGap;  // between an icon and its "Quantity" line
-};
-
 struct PetSpec {
-  const char* name;  // the save-file token, e.g. "adult_avo"
+  const char* name;   // the save-file token, e.g. "adult_avo"
+  const char* title;  // what the player reads, e.g. "Adult Avo"
   Species species;
   Stage stage;
   const char* idleSprite;
   Sheet sheets[4];
   std::vector<Food> foods;
-  ShopLayout shop;
-  FridgeLayout fridge;
+  Grid shopGrid;
+  unsigned shopLabelSize;
+  Grid fridgeGrid;
 };
 
 const PetSpec* findPet(const std::string& name);

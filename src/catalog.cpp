@@ -22,7 +22,7 @@ const std::vector<Food> kBabyGhostFoods = {{"Baby Milk", 50, "assets/food/milk.p
                                            {"Baby Medicine", 500, "assets/food/medicine.png"}};
 
 // Grid origins are the original windows' centering arithmetic, evaluated.
-const ShopLayout kAdultShop = {"Adult Avo Shopping", {323, 128, 350, 400, 3}, 34, "NOT ENOUGH COINS"};
+const Grid kAdultShopGrid = {323, 128, 350, 400, 3};
 const Grid kAdultFridgeGrid = {685, 265, 200, 200, 3};
 
 const std::vector<std::string> kAvoQuotes = {
@@ -44,38 +44,38 @@ const std::vector<std::string> kGhostQuotes = {
     "Why dont ghosts like rain? Because it dampens their spirits!"};
 
 const PetSpec kPets[] = {
-    {"adult_avo", Species::Avo, Stage::Adult, "assets/pets/adult_avo/idle.png",
+    {"adult_avo", "Adult Avo", Species::Avo, Stage::Adult, "assets/pets/adult_avo/idle.png",
      {{"assets/pets/adult_avo/sleep.png", 32, 32, 4, 3, 0.8f},
       {"assets/pets/adult_avo/shower.png", 32, 32, 5, 5, 1.4f},
       {"assets/pets/adult_avo/medicine.png", 32, 32, 2, 2, 1.4f},
       {"assets/pets/adult_avo/eat.png", 32, 32, 3, 3, 1.4f}},
      kAdultAvoFoods,
-     kAdultShop,
-     {"Eating Adult Avo", kAdultFridgeGrid, 15}},
-    {"baby_avo", Species::Avo, Stage::Baby, "assets/pets/baby_avo/idle.png",
+     kAdultShopGrid, 34,
+     kAdultFridgeGrid},
+    {"baby_avo", "Baby Avo", Species::Avo, Stage::Baby, "assets/pets/baby_avo/idle.png",
      {{"assets/pets/baby_avo/sleep.png", 32, 32, 3, 3, 0.8f},
       {"assets/pets/baby_avo/shower.png", 32, 32, 5, 5, 0.8f},
       {"assets/pets/baby_avo/medicine.png", 32, 32, 2, 2, 1.4f},
       {"assets/pets/baby_avo/eat.png", 32, 32, 3, 3, 1.4f}},
      kBabyAvoFoods,
-     {"Baby Avo Shop", {173, 300, 300, 0, 4}, 24, "NOT ENOUGH GOLD"},
-     {"Eating Baby Avo", {510, 150, 450, 450, 2}, 15}},
-    {"adult_ghost", Species::Ghost, Stage::Adult, "assets/pets/adult_ghost/idle.png",
+     {173, 300, 300, 0, 4}, 24,
+     {510, 150, 450, 450, 2}},
+    {"adult_ghost", "Adult Ghost", Species::Ghost, Stage::Adult, "assets/pets/adult_ghost/idle.png",
      {{"assets/pets/adult_ghost/sleep.png", 36, 36, 2, 3, 0.8f},
       {"assets/pets/adult_ghost/shower.png", 36, 36, 2, 4, 0.8f},
       {"assets/pets/adult_ghost/medicine.png", 32, 32, 1, 2, 1.4f},
       {"assets/pets/adult_ghost/eat.png", 32, 32, 2, 3, 1.4f}},
      kAdultGhostFoods,
-     {"Shopping", kAdultShop.grid, 34, "NOT ENOUGH COINS"},
-     {"Eating Ghost Window", kAdultFridgeGrid, 5}},
-    {"baby_ghost", Species::Ghost, Stage::Baby, "assets/pets/baby_ghost/idle.png",
+     kAdultShopGrid, 34,
+     kAdultFridgeGrid},
+    {"baby_ghost", "Baby Ghost", Species::Ghost, Stage::Baby, "assets/pets/baby_ghost/idle.png",
      {{"assets/pets/baby_ghost/sleep.png", 36, 36, 2, 3, 0.8f},
       {"assets/pets/baby_ghost/shower.png", 36, 36, 2, 4, 0.8f},
       {"assets/pets/baby_ghost/medicine.png", 32, 32, 1, 2, 1.4f},
       {"assets/pets/baby_ghost/eat.png", 32, 32, 2, 3, 1.4f}},
      kBabyGhostFoods,
-     {"Baby Ghost Shopping", {560, 240, 250, 250, 2}, 24, "NOT ENOUGH COINS"},
-     {"Eating Baby Ghost", {585, 265, 200, 200, 2}, 15}},
+     {560, 240, 250, 250, 2}, 24,
+     {585, 265, 200, 200, 2}},
 };
 
 }  // namespace

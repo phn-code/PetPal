@@ -12,8 +12,7 @@ int inStock(const Pantry& pantry, const std::string& food) {
 }  // namespace
 
 bool runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry) {
-  const FridgeLayout& layout = pet.fridge;
-  sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
+  sf::RenderWindow window(sf::VideoMode(1920, 1080), std::string(pet.title) + " Fridge");
 
   sf::Texture fridgeTexture;
   if (!fridgeTexture.loadFromFile("assets/ui/fridge.png"))
@@ -23,13 +22,12 @@ bool runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
 
   sf::Text message = makeText(font, 36, sf::Color::Red, 800, 100);
 
-  FoodIcons icons = loadFoodIcons(pet.foods, layout.grid);
+  FoodIcons icons = loadFoodIcons(pet.foods, pet.fridgeGrid);
   std::vector<sf::Text> quantities;
   for (std::size_t i = 0; i < pet.foods.size(); ++i) {
     const sf::Sprite& sprite = icons.sprites[i];
     quantities.push_back(makeText(font, 28, sf::Color::Black, sprite.getPosition().x,
-                                  sprite.getPosition().y + sprite.getGlobalBounds().height +
-                                      layout.labelGap,
+                                  sprite.getPosition().y + sprite.getGlobalBounds().height + 15,
                                   "Quantity: " + std::to_string(inStock(pantry, pet.foods[i].name))));
   }
 

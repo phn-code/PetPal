@@ -345,20 +345,20 @@ int journey(Recorder& rec, const std::string& pet) {
   // Shop and fridge clicks are item centres read off the golden frames: buy,
   // then run out of coins; eat a stocked item, then one that is not.
   if (pet == "adult_avo")
-    return runPetJourney(rec, {pet, kIntroAvo, kIntroAdult, "Adult Avo Shopping",
+    return runPetJourney(rec, {pet, kIntroAvo, kIntroAdult, "Adult Avo Shop",
                                {{398, 203}, {748, 203}, {398, 603}, {398, 203}},
-                               "Eating Adult Avo", {{760, 340}, {1160, 340}}});
+                               "Adult Avo Fridge", {{760, 340}, {1160, 340}}});
   if (pet == "baby_avo")
     return runPetJourney(rec, {pet, kIntroAvo, kIntroBaby, "Baby Avo Shop",
                                {{250, 375}, {1148, 375}, {1148, 375}},
-                               "Eating Baby Avo", {{598, 230}, {1035, 225}}});
+                               "Baby Avo Fridge", {{598, 230}, {1035, 225}}});
   if (pet == "adult_ghost")
-    return runPetJourney(rec, {pet, kIntroGhost, kIntroAdult, "Shopping",
+    return runPetJourney(rec, {pet, kIntroGhost, kIntroAdult, "Adult Ghost Shop",
                                {{398, 203}, {398, 603}, {398, 603}},
-                               "Eating Ghost Window", {{760, 340}, {1160, 340}}});
-  return runPetJourney(rec, {pet, kIntroGhost, kIntroBaby, "Baby Ghost Shopping",
+                               "Adult Ghost Fridge", {{760, 340}, {1160, 340}}});
+  return runPetJourney(rec, {pet, kIntroGhost, kIntroBaby, "Baby Ghost Shop",
                              {{635, 320}, {885, 570}, {885, 570}},
-                             "Eating Baby Ghost", {{660, 345}, {865, 345}}});
+                             "Baby Ghost Fridge", {{660, 345}, {865, 345}}});
 }
 
 int loadGame(Recorder& rec) {
@@ -369,8 +369,8 @@ int loadGame(Recorder& rec) {
   // click at once.
   s.click(kMain, kMenuLoad.x, kMenuLoad.y, "menu: load")
       .click(kMain, kEat.x, kEat.y, "eat", 2)
-      .click("Eating Ghost Window", 1160, 340, "eat: apple")
-      .key("Eating Ghost Window", sf::Keyboard::Escape, "eat: close")
+      .click("Adult Ghost Fridge", 1160, 340, "eat: apple")
+      .key("Adult Ghost Fridge", sf::Keyboard::Escape, "eat: close")
       .click(kMain, kInfo.x, kInfo.y, "info", 2)
       .key("Information", sf::Keyboard::B, "info: close")
       .close(kMain, "quit", 2);
@@ -514,8 +514,8 @@ int closeDuringShop(Recorder& rec) {
   s.capturing = false;
   startNewGame(s, kIntroAvo, kIntroAdult);
   s.click(kMain, kShop.x, kShop.y, "shop", 2)
-      .click("Adult Avo Shopping", 398, 203, "shop: buy steak")
-      .then("Adult Avo Shopping", 1, "close the shop and the home window", [] {
+      .click("Adult Avo Shop", 398, 203, "shop: buy steak")
+      .then("Adult Avo Shop", 1, "close the shop and the home window", [] {
         sf::Event e;
         e.type = sf::Event::Closed;
         pin::events().push_back(e);
@@ -566,12 +566,12 @@ int smallScreen(Recorder& rec) {
       .click(kMain, adult.x, adult.y, "intro: pick adult")
       .click(kMain, leftBar.x, leftBar.y, "left bar beside sleep", 2)
       .click(kMain, shop.x, shop.y, "shop")
-      .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
-      .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
-      .close("Adult Avo Shopping", "shop: close")
+      .click("Adult Avo Shop", steak.x, steak.y, "shop: buy steak")
+      .click("Adult Avo Shop", steak.x, steak.y, "shop: buy steak")
+      .close("Adult Avo Shop", "shop: close")
       .click(kMain, eatEdge.x, eatEdge.y, "eat: left edge of the button")
-      .click("Eating Adult Avo", fridgeSteak.x, fridgeSteak.y, "eat: steak")
-      .key("Eating Adult Avo", sf::Keyboard::Escape, "eat: close")
+      .click("Adult Avo Fridge", fridgeSteak.x, fridgeSteak.y, "eat: steak")
+      .key("Adult Avo Fridge", sf::Keyboard::Escape, "eat: close")
       .click(kMain, info.x, info.y, "info", kAfterAnimation)
       .key("Information", sf::Keyboard::B, "info: close")
       .click(kMain, math.x, math.y, "math")

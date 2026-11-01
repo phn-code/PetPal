@@ -21,8 +21,7 @@ FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid) {
 }
 
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
-  const ShopLayout& layout = pet.shop;
-  sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
+  sf::RenderWindow window(sf::VideoMode(1920, 1080), std::string(pet.title) + " Shop");
 
   int trolleyCount = 0;
   sf::Text coinsText = makeText(font, 36, sf::Color::Black, 20, 20, "Coins: " + std::to_string(coins));
@@ -36,11 +35,11 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
   trolleySprite.setPosition(1700, 70);
   trolleySprite.setScale(0.5f, 0.5f);
 
-  FoodIcons icons = loadFoodIcons(pet.foods, layout.grid);
+  FoodIcons icons = loadFoodIcons(pet.foods, pet.shopGrid);
   std::vector<sf::Text> labels;
   for (std::size_t i = 0; i < pet.foods.size(); ++i) {
     const sf::Sprite& sprite = icons.sprites[i];
-    labels.push_back(makeText(font, layout.labelSize, sf::Color::Black, sprite.getPosition().x,
+    labels.push_back(makeText(font, pet.shopLabelSize, sf::Color::Black, sprite.getPosition().x,
                               sprite.getPosition().y + sprite.getGlobalBounds().height + 10,
                               std::string(pet.foods[i].name) + " - " +
                                   std::to_string(pet.foods[i].price) + " coins"));
@@ -63,7 +62,7 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
           coinsText.setString("Coins: " + std::to_string(coins));
           trolleyText.setString("Trolley: " + std::to_string(trolleyCount));
         } else {
-          noCoinsText.setString(layout.noCoinsText);
+          noCoinsText.setString("NOT ENOUGH COINS");
         }
       }
     }
