@@ -287,13 +287,13 @@ const sf::Vector2i kSleep(115, 205), kShower(545, 205), kGame(975, 205), kEat(13
 // then main draws one home frame.
 const int kAfterAnimation = 49;
 
+// Shop and fridge clicks are item centres read off the golden frames: buy,
+// then run out of coins; eat a stocked item, then one that is not.
 struct PetCase {
-  std::string pet;
   sf::Vector2i species;  // intro button
   sf::Vector2i age;      // intro Adult/Baby label
-  std::string shopWindow;
+  std::string title;     // the pet's PetSpec title, which names its windows
   std::vector<sf::Vector2i> shopClicks;
-  std::string eatWindow;
   std::vector<sf::Vector2i> eatClicks;
 };
 
@@ -309,6 +309,7 @@ void startNewGame(Script& s, sf::Vector2i species, sf::Vector2i age) {
 }
 
 int runPetJourney(Recorder& rec, const PetCase& c) {
+  const std::string shop = c.title + " Shop", fridge = c.title + " Fridge";
   Script s(rec);
   startNewGame(s, c.species, c.age);
   s.click(kMain, kSleep.x, kSleep.y, "sleep", 2)
@@ -316,14 +317,14 @@ int runPetJourney(Recorder& rec, const PetCase& c) {
       .click(kMain, kMedicine.x, kMedicine.y, "medicine", kAfterAnimation)
       .click(kMain, kShop.x, kShop.y, "shop", kAfterAnimation);
   for (std::size_t i = 0; i < c.shopClicks.size(); ++i)
-    s.click(c.shopWindow, c.shopClicks[i].x, c.shopClicks[i].y,
+    s.click(shop, c.shopClicks[i].x, c.shopClicks[i].y,
             "shop: click " + std::to_string(i + 1));
-  s.close(c.shopWindow, "shop: close")
+  s.close(shop, "shop: close")
       .click(kMain, kEat.x, kEat.y, "eat");
   for (std::size_t i = 0; i < c.eatClicks.size(); ++i)
-    s.click(c.eatWindow, c.eatClicks[i].x, c.eatClicks[i].y,
+    s.click(fridge, c.eatClicks[i].x, c.eatClicks[i].y,
             "eat: click " + std::to_string(i + 1));
-  s.key(c.eatWindow, sf::Keyboard::Escape, "eat: close")
+  s.key(fridge, sf::Keyboard::Escape, "eat: close")
       .click(kMain, kInfo.x, kInfo.y, "info", kAfterAnimation)
       .key("Information", sf::Keyboard::B, "info: close")
       .click(kMain, kTouch.x, kTouch.y, "touch pet")
@@ -334,26 +335,6 @@ int runPetJourney(Recorder& rec, const PetCase& c) {
   rec.check(s.done(), "script did not finish: the game stopped early");
   rec.checkText("save.txt", readFile("pet_stats.txt"));
   return rec.finish();
-}
-
-int journey(Recorder& rec, const std::string& pet) {
-  // Shop and fridge clicks are item centres read off the golden frames: buy,
-  // then run out of coins; eat a stocked item, then one that is not.
-  if (pet == "adult_avo")
-    return runPetJourney(rec, {pet, kIntroAvo, kIntroAdult, "Adult Avo Shop",
-                               {{398, 203}, {748, 203}, {398, 603}, {398, 203}},
-                               "Adult Avo Fridge", {{760, 340}, {1160, 340}}});
-  if (pet == "baby_avo")
-    return runPetJourney(rec, {pet, kIntroAvo, kIntroBaby, "Baby Avo Shop",
-                               {{250, 375}, {1148, 375}, {1148, 375}},
-                               "Baby Avo Fridge", {{598, 230}, {1035, 225}}});
-  if (pet == "adult_ghost")
-    return runPetJourney(rec, {pet, kIntroGhost, kIntroAdult, "Adult Ghost Shop",
-                               {{398, 203}, {398, 603}, {398, 603}},
-                               "Adult Ghost Fridge", {{760, 340}, {1160, 340}}});
-  return runPetJourney(rec, {pet, kIntroGhost, kIntroBaby, "Baby Ghost Shop",
-                             {{635, 320}, {885, 570}, {885, 570}},
-                             "Baby Ghost Fridge", {{660, 345}, {865, 345}}});
 }
 
 int loadGame(Recorder& rec) {
@@ -678,10 +659,46 @@ int mathEscapeIntro(Recorder& rec) {
   return rec.finish();
 }
 
-const std::vector<std::string> kScenarios = {
-    "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "save_retry", "close_during_shop", "small_screen",
-    "math_odd_answers", "math_escape_intro"};
+// Every scenario `make pin` runs, in the order it lists them.
+const struct {
+  const char* name;
+  int (*run)(Recorder&);
+} kScenarios[] = {
+    {"journey_adult_avo",
+     [](Recorder& rec) {
+       return runPetJourney(rec, {kIntroAvo, kIntroAdult, "Adult Avo",
+                                  {{398, 203}, {748, 203}, {398, 603}, {398, 203}},
+                                  {{760, 340}, {1160, 340}}});
+     }},
+    {"journey_baby_avo",
+     [](Recorder& rec) {
+       return runPetJourney(rec, {kIntroAvo, kIntroBaby, "Baby Avo",
+                                  {{250, 375}, {1148, 375}, {1148, 375}},
+                                  {{598, 230}, {1035, 225}}});
+     }},
+    {"journey_adult_ghost",
+     [](Recorder& rec) {
+       return runPetJourney(rec, {kIntroGhost, kIntroAdult, "Adult Ghost",
+                                  {{398, 203}, {398, 603}, {398, 603}},
+                                  {{760, 340}, {1160, 340}}});
+     }},
+    {"journey_baby_ghost",
+     [](Recorder& rec) {
+       return runPetJourney(rec, {kIntroGhost, kIntroBaby, "Baby Ghost",
+                                  {{635, 320}, {885, 570}, {885, 570}},
+                                  {{660, 345}, {865, 345}}});
+     }},
+    {"load_game", loadGame},
+    {"games", games},
+    {"close_quits", closeQuits},
+    {"bad_save", badSave},
+    {"save_writes", saveWrites},
+    {"save_retry", saveRetry},
+    {"close_during_shop", closeDuringShop},
+    {"small_screen", smallScreen},
+    {"math_odd_answers", mathOddAnswers},
+    {"math_escape_intro", mathEscapeIntro},
+};
 
 }  // namespace
 
@@ -692,27 +709,20 @@ int main(int argc, char** argv) {
   }
   std::string name = argv[1];
   if (name == "--list") {
-    for (const auto& s : kScenarios) std::cout << s << "\n";
+    for (const auto& scenario : kScenarios) std::cout << scenario.name << "\n";
     return 0;
   }
-  // Production logs to stdout on every frame; keep the pin's own output readable.
-  std::cout.rdbuf(nullptr);
-  Recorder rec(name);
-  try {
-    if (name.rfind("journey_", 0) == 0) return journey(rec, name.substr(8));
-    if (name == "load_game") return loadGame(rec);
-    if (name == "games") return games(rec);
-    if (name == "close_quits") return closeQuits(rec);
-    if (name == "bad_save") return badSave(rec);
-    if (name == "save_writes") return saveWrites(rec);
-    if (name == "save_retry") return saveRetry(rec);
-    if (name == "close_during_shop") return closeDuringShop(rec);
-    if (name == "small_screen") return smallScreen(rec);
-    if (name == "math_odd_answers") return mathOddAnswers(rec);
-    if (name == "math_escape_intro") return mathEscapeIntro(rec);
-  } catch (const std::exception& e) {
-    rec.fail(std::string("threw: ") + e.what() + " during step \"" + rec.step + "\"");
-    return rec.finish();
+  for (const auto& scenario : kScenarios) {
+    if (name != scenario.name) continue;
+    // Production logs to stdout on every frame; keep the pin's own output readable.
+    std::cout.rdbuf(nullptr);
+    Recorder rec(name);
+    try {
+      return scenario.run(rec);
+    } catch (const std::exception& e) {
+      rec.fail(std::string("threw: ") + e.what() + " during step \"" + rec.step + "\"");
+      return rec.finish();
+    }
   }
   std::cerr << "unknown scenario " << name << "\n";
   return 2;
