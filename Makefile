@@ -61,9 +61,15 @@ check-assets:
 lint:
 	python3 tests/lint.py
 
-# Rejects a commit that changes a golden without naming it in the message.
+# Installs .githooks/commit-msg, which rejects a commit that changes a golden
+# without naming it in the message. A hooks path you set yourself is kept.
 hooks:
-	git config core.hooksPath .githooks
+	@current=$$(git config core.hooksPath); \
+	if [ -z "$$current" ]; then git config core.hooksPath .githooks; \
+	elif [ "$$current" != .githooks ]; then \
+	  echo "hooks: core.hooksPath is $$current, so .githooks/commit-msg is not installed;" \
+	       "call it from your own commit-msg hook" >&2; \
+	fi
 
 # Everything a change must pass before it is committed.
 check: hooks all test pin check-assets lint
