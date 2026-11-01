@@ -5,13 +5,12 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-using namespace std;
 class mini_game {
  private:
   sf::RenderWindow* game_window;
   sf::Event ev;
   sf::VideoMode game_video_mode;
-  vector<sf::RectangleShape> boxes;
+  std::vector<sf::RectangleShape> boxes;
   sf::RectangleShape falling_boxes;
 
   // variables for boxes
@@ -44,7 +43,7 @@ class mini_game {
   sf::Music mini_game_music;
 
   // vector of songs
-  vector<string> mini_game_song_paths;
+  std::vector<std::string> mini_game_song_paths;
 
   // game over screen
   sf::Text game_over_text;
@@ -81,7 +80,7 @@ class mini_game {
   void update_text();  // updates the text in the main game
   void render_text(sf::RenderTarget& target);  // renders text in the main game
   void initialise_music();
-  string get_random_song(vector<string>& songs_path);
+  std::string get_random_song(std::vector<std::string>& songs_path);
   void initialise_game_over_text();
   void update_game_over_text();
   void render_game_over_text(sf::RenderTarget& target);

@@ -237,7 +237,7 @@ void mini_game::update_points() {
 }
 void mini_game::initialise_fonts() {
   if (!game_font.loadFromFile("assets/fonts/Regular.ttf")) {
-    cout << "failed to load" << endl;
+    std::cout << "failed to load" << std::endl;
   }
   game_ui_text.setFont(game_font);
   game_ui_text.setCharacterSize(65);
@@ -263,7 +263,7 @@ void mini_game::initialise_music() {
   mini_game_music.play();
 }
 
-string mini_game::get_random_song(vector<string>& songs_path) {
+std::string mini_game::get_random_song(std::vector<std::string>& songs_path) {
   int random_index = rand() % songs_path.size();
   return songs_path[random_index];
 }
