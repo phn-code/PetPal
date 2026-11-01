@@ -28,7 +28,7 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font) {
 
   std::optional<Species> species;
   while (window.isOpen()) {
-    window.clear(sf::Color(230, 230, 220));
+    clearScene(window, sf::Color(230, 230, 220));
     window.draw(avoButton);
     window.draw(ghostButton);
     window.draw(title);

@@ -40,7 +40,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 - `math_escape_intro`: Escape during the math intro returns to the pet.
 - `close_quits`: closing the window on the start menu or the pet picker quits without writing a save.
 - `bad_save`: an unreadable save counts as no save, and a new game still starts.
-- `small_screen`: on a 1470x802 screen every window shows the whole 1920x1080 scene scaled down, and clicks on the scaled buttons land.
+- `small_screen`: on a 1470x802 screen every window, the two minigames included, shows the whole 1920x1080 scene at one scale on both axes with black bars at the sides. A click on the first pixel column of a scaled button lands, and a click in a bar hits nothing.
 - `save_writes`: the save is written only when what it holds changes, and replaced whole rather than rewritten in place.
 
 The unit tests (`make test`, `tests/unit/unit_tests.cpp`) build with the same `shim.h`, so they read the fake clock and open no window.

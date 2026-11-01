@@ -249,12 +249,15 @@ class Script {
 
   bool done() const { return actions_.empty(); }
   bool capturing = true;
+  // Runs on every displayed frame, captured or not.
+  std::function<void(sf::PinWindow&)> inspect;
   // Capture one display in `sampleEvery`; long runs of near-identical frames
   // (the minigame's falling box) would otherwise bloat the goldens.
   int sampleEvery = 1;
 
  private:
   void onDisplay(sf::PinWindow& w) {
+    if (inspect) inspect(w);
     if (capturing && displays_++ % sampleEvery == 0) rec_.capture(w);
     pin::now() += kTick;
     if (!actions_.empty() && actions_.front().window == w.title() &&
@@ -474,33 +477,59 @@ int saveWrites(Recorder& rec) {
 }
 
 // On a screen too small for 1920x1080, as on a 13-inch MacBook, every window
-// opens at 1470x802 and shows the whole scene scaled down. Clicks land where
-// the scaled scene draws each button.
+// opens at 1470x802. The scene scales by 802/1080 on both axes to 1426x802 and
+// sits centred, with black bars 22 px wide at the left and right. Clicks land
+// where the scaled scene draws each button, and a click in a bar hits nothing.
 int smallScreen(Recorder& rec) {
   pin::screen() = sf::Vector2u(1470, 802);
-  auto px = [](sf::Vector2i scene) {
-    return sf::Vector2i(scene.x * 1470 / 1920, scene.y * 802 / 1080);
+  const float kLeft = 22, kScale = 802.f / 1080;
+  auto px = [=](sf::Vector2i scene) {
+    return sf::Vector2i(std::lround(kLeft + scene.x * kScale), std::lround(scene.y * kScale));
   };
   const sf::Vector2i steak = px({398, 203}), menuNew = px(kMenuNew), avo = px(kIntroAvo),
-                     adult = px(kIntroAdult), shop = px(kShop), eat = px(kEat),
-                     info = px(kInfo), fridgeSteak = px({760, 340});
+                     adult = px(kIntroAdult), shop = px(kShop), info = px(kInfo),
+                     math = px(kMath), game = px(kGame), fridgeSteak = px({760, 340});
+  // The first pixel column of the Eat button, whose scene x range starts at
+  // 1310. A click there lands only if the mapping is exact.
+  const sf::Vector2i eatEdge(static_cast<int>(std::ceil(kLeft + 1310 * kScale)), px(kEat).y);
+  const sf::Vector2i leftBar(10, px(kSleep).y);
+
+  std::set<std::string> reported;
   Script s(rec);
+  s.inspect = [&rec, &reported](sf::PinWindow& w) {
+    sf::Image img = w.getTexture().copyToImage();
+    for (unsigned x : {0u, 21u, 1448u, 1469u})
+      for (unsigned y : {0u, 401u, 801u}) {
+        sf::Color c = img.getPixel(x, y);
+        if ((c.r == 0 && c.g == 0 && c.b == 0) || !reported.insert(w.title()).second) continue;
+        rec.fail("[" + w.title() + " / " + rec.step + "] bar pixel (" + std::to_string(x) + ", " +
+                 std::to_string(y) + ") is (" + std::to_string(c.r) + ", " + std::to_string(c.g) +
+                 ", " + std::to_string(c.b) + "), want black");
+      }
+  };
   s.click(kMain, menuNew.x, menuNew.y, "menu: new game")
       .click(kMain, avo.x, avo.y, "intro: pick avo")
       .click(kMain, adult.x, adult.y, "intro: pick adult")
-      .click(kMain, shop.x, shop.y, "shop", 2)
+      .click(kMain, leftBar.x, leftBar.y, "left bar beside sleep", 2)
+      .click(kMain, shop.x, shop.y, "shop")
       .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
       .click("Adult Avo Shopping", steak.x, steak.y, "shop: buy steak")
       .close("Adult Avo Shopping", "shop: close")
-      .click(kMain, eat.x, eat.y, "eat")
+      .click(kMain, eatEdge.x, eatEdge.y, "eat: left edge of the button")
       .click("Eating Adult Avo", fridgeSteak.x, fridgeSteak.y, "eat: steak")
       .key("Eating Adult Avo", sf::Keyboard::Escape, "eat: close")
       .click(kMain, info.x, info.y, "info", kAfterAnimation)
       .key("Information", sf::Keyboard::B, "info: close")
+      .click(kMain, math.x, math.y, "math")
+      .key("Math Game", sf::Keyboard::Escape, "math: escape during intro", 2)
+      .click(kMain, game.x, game.y, "minigame")
+      .key("PetPal", sf::Keyboard::Escape, "minigame: escape", 2)
       .close(kMain, "quit", 2);
   int code = petpal_main();
   rec.check(code == 0, "main returned " + std::to_string(code));
   rec.check(s.done(), "script did not finish at step \"" + rec.step + "\": a click missed");
+  std::optional<SaveFile> save = readSave("pet_stats.txt");
+  rec.check(save && save->stats.sleep == 25, "the click in the left bar started sleep");
   rec.checkText("save.txt", readFile("pet_stats.txt"));
   return rec.finish();
 }

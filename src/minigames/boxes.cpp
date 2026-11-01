@@ -9,7 +9,6 @@ void mini_game::initialise_window() {
       game_video_mode, "PetPal",
       sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
   game_window->setFramerateLimit(60);
-  showWholeScene(*game_window);
 }
 
 void mini_game::initialise_image() {
@@ -118,7 +117,7 @@ void mini_game::poll_events() {
 
 void mini_game::render() {
   // draws and represents everything on the screen
-  game_window->clear(sf::Color(230, 230, 220));
+  clearScene(*game_window, sf::Color(230, 230, 220));
   if (in_intro_game) {
     render_intro_text(*game_window);
   } else if (game_over == false) {
@@ -128,7 +127,7 @@ void mini_game::render() {
     render_text(*game_window);
   } else {
     mini_game_music.pause();
-    game_window->clear(sf::Color(230, 230, 220));
+    clearScene(*game_window, sf::Color(230, 230, 220));
     render_game_over_text(*game_window);
   }
   game_window->display();

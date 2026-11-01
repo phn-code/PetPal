@@ -63,7 +63,7 @@ struct HomeArt {
   }
 
   void drawChrome(sf::RenderTarget& target) const {
-    target.clear(sf::Color(230, 230, 220));
+    clearScene(target, sf::Color(230, 230, 220));
     target.draw(line);
     for (const sf::Sprite& icon : icons) target.draw(icon);
   }

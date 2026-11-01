@@ -40,7 +40,7 @@ MenuChoice runMenu(sf::RenderWindow& window, sf::Font& font, bool canLoad) {
       }
     }
 
-    window.clear(sf::Color(230, 230, 220));
+    clearScene(window, sf::Color(230, 230, 220));
     window.draw(newGame);
     window.draw(loadGame);
     if (showNoGames) window.draw(noGames);

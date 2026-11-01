@@ -60,12 +60,11 @@ math_game::math_game() {
   std::srand(static_cast<unsigned int>(
       std::time(0)));  // Seed for random number generation
   game_window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Math Game");
-  showWholeScene(*game_window);
   game_window->display();
 
   display_intro();       // Show the intro screen
   rules_page();          // Show the game rules
-  game_window->clear();  // Clear the window for the game
+  clearScene(*game_window, sf::Color::Black);
   timer.restart();       // Restart the timer
   run();                 // Start the game loop
 }
@@ -149,8 +148,7 @@ void math_game::run() {
 
 // Function to render the game elements
 void math_game::render() {
-  game_window->clear(
-      sf::Color(230, 230, 220));  // Clear the window with a background color
+  clearScene(*game_window, sf::Color(230, 230, 220));
   sf::Font font;
   if (!font.loadFromFile("assets/fonts/dogica.ttf")) {
     std::cout << "Error, font not found" << std::endl;  // Error loading font
@@ -213,7 +211,7 @@ void math_game::render() {
 
 // Function to display the results after the game
 void math_game::display_results() {
-  game_window->clear(sf::Color(230, 230, 220));  // Clear the window
+  clearScene(*game_window, sf::Color(230, 230, 220));
   sf::Font font;
   if (!font.loadFromFile("assets/fonts/Regular.ttf")) {
     std::cout << "Error, font not found" << std::endl;  // Error loading font
@@ -277,7 +275,7 @@ void math_game::display_intro() {
     intro_scene.update(0, delta_time);  // Update the animation
     sprite.setTextureRect(
         intro_scene.uv_rect);  // Set the current frame of the animation
-    game_window->clear(sf::Color(196, 164, 132));  // Clear the window
+    clearScene(*game_window, sf::Color(196, 164, 132));
     game_window->draw(sprite);                     // Draw the intro sprite
     game_window->display();                        // Update the window
     if (total_time.getElapsedTime().asSeconds() >=
@@ -308,7 +306,7 @@ void math_game::rules_page() {
         escape = true;  // Set exit flag if Enter is pressed
       }
     }
-    game_window->clear(sf::Color(230, 230, 220));  // Clear the window
+    clearScene(*game_window, sf::Color(230, 230, 220));
     if (escape) {
       break;  // Exit if Enter was pressed
     }

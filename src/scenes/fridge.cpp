@@ -14,7 +14,6 @@ int inStock(const Pantry& pantry, const std::string& food) {
 void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry) {
   const FridgeLayout& layout = pet.fridge;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
-  showWholeScene(window);
 
   sf::Texture fridgeTexture;
   if (!fridgeTexture.loadFromFile("assets/ui/fridge.png"))
@@ -60,7 +59,7 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
       }
     }
 
-    window.clear(sf::Color(245, 245, 220));
+    clearScene(window, sf::Color(245, 245, 220));
     window.draw(fridge);
     window.draw(message);
     for (std::size_t i = 0; i < pet.foods.size(); ++i) {
