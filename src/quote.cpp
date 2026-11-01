@@ -36,17 +36,20 @@ std::string pickQuote(Species species) {
 }
 
 void updateQuote(Quote& quote, Species species) {
-  if (quote.sinceShown.getElapsedTime().asSeconds() >= kNewQuoteInterval) {
+  float elapsed = quote.sinceChange.getElapsedTime().asSeconds();
+  if (!quote.visible && elapsed >= kNewQuoteInterval) {
     quote.text = pickQuote(species);
-    quote.sinceShown.restart();
     quote.visible = true;
-  }
-  if (quote.visible && quote.sinceShown.getElapsedTime().asSeconds() >= kDisplayDuration)
+    quote.sinceChange.restart();
+  } else if (quote.visible && elapsed >= kDisplayDuration) {
     quote.visible = false;
+    quote.sinceChange.restart();
+  }
 }
 
-void drawQuote(sf::RenderTarget& target, const sf::Font& font, const std::string& text) {
-  sf::Text quoteText(text, font, 39);
+void drawQuote(sf::RenderTarget& target, const sf::Font& font, const Quote& quote) {
+  if (!quote.visible) return;
+  sf::Text quoteText(quote.text, font, 39);
   quoteText.setFillColor(sf::Color::Black);
   sf::FloatRect bounds = quoteText.getLocalBounds();
   quoteText.setOrigin(bounds.left + bounds.width / 2, 0);

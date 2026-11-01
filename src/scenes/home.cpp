@@ -120,7 +120,7 @@ void runActivity(sf::RenderWindow& window, sf::Font& font, const HomeArt& art,
     anim.update(frameTimer.restart().asSeconds());
     art.drawChrome(window);
     anim.draw(window);
-    drawQuote(window, font, quote.text);
+    drawQuote(window, font, quote);
     drawStats(window, font, stats, art.coinTexture);
     window.display();
     if (total.getElapsedTime().asSeconds() >= 6) break;
@@ -140,7 +140,6 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
 
   std::string written;  // the save file's text as last written
   sf::Clock decayTimer;
-  quote.text = pickQuote(pet.species);
 
   while (window.isOpen()) {
     if (decayTimer.getElapsedTime().asSeconds() >= 30) {
@@ -207,7 +206,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
 
     art.drawChrome(window);
     drawStats(window, font, stats, art.coinTexture);
-    drawQuote(window, font, quote.text);
+    drawQuote(window, font, quote);
     window.draw(art.idle);
     drawWarnings(window, font, stats);
     window.display();

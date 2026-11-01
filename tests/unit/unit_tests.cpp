@@ -15,12 +15,6 @@
 
 namespace {
 
-// Known bugs this suite already catches. A listed test must keep failing until
-// its fix lands; the fix then removes it from this list.
-const std::set<std::string> kExpectedFailures = {
-    "[Avo Test - Quote Visibility]",  // quote never hides (src/quote.cpp)
-};
-
 std::set<std::string> failures;
 
 void check(bool ok, const std::string& name, const std::string& detail = "") {
@@ -166,20 +160,6 @@ int main() {
   answerInputTests();
   readSaveTests();
 
-  int unexpected = 0;
-  for (const std::string& name : failures) {
-    if (kExpectedFailures.count(name)) {
-      std::cout << "XFAIL " << name << std::endl;
-    } else {
-      std::cout << "FAIL " << name << std::endl;
-      unexpected++;
-    }
-  }
-  for (const std::string& name : kExpectedFailures) {
-    if (!failures.count(name)) {
-      std::cout << "XPASS " << name << ": remove it from kExpectedFailures" << std::endl;
-      unexpected++;
-    }
-  }
-  return unexpected == 0 ? 0 : 1;
+  for (const std::string& name : failures) std::cout << "FAIL " << name << std::endl;
+  return failures.empty() ? 0 : 1;
 }

@@ -3,7 +3,7 @@
 2	My Virtual Pet	menu: new game	f697549faabe28819521118a285fcfc99b16ffbb1e0aba0a764b3597bdc7b2eb
 3	My Virtual Pet	intro: pick species	f90f9913a8c1562bb3566ea5373fd3c3ec9553cadbe2696e2ccb7718c5b1ea4a
 4	My Virtual Pet	intro: pick age	f90f9913a8c1562bb3566ea5373fd3c3ec9553cadbe2696e2ccb7718c5b1ea4a
-5	My Virtual Pet	intro: pick age	f896c677d6c4a6c1b1e14277c8bb571baaa320482e001fb75f1eb1892db3925a
+5	My Virtual Pet	intro: pick age	fadd936861f6febc5728b03b5f6fc4c49c0c05d6208ff949ce053141ebe159ed
 6	Math Game	math	1a67a8fc5f25375bbd907954244ab9a4ac132df7623ee38d8bd693207f92fd7e
 7	Math Game	math	5b019c896bc76dd42a025effebd5ab8e3f29160754cde4404562a3ac62efca0c
 8	Math Game	math	5b019c896bc76dd42a025effebd5ab8e3f29160754cde4404562a3ac62efca0c
@@ -42,8 +42,8 @@
 41	Math Game	math: q4 right	8bd7f558e83ef0336d25596a54636f1563172802e7995abb2f80e83ca7d93fef
 42	Math Game	math: q5 wrong	7e8479a47c9768d0065d264c1621b2032afcb060f19543f116931c9871d5f1a9
 43	Math Game	math: close results	62e4cddfc6c9b2313e7511925510e2d3cf72c05fb4986f6cde86f74275e502ea
-44	My Virtual Pet	math: close results	684aa899d5a2232ac1f9d7700b1aa3c5a08c8f6b4a0f84d5f09c3c88b797377c
-45	My Virtual Pet	math: close results	684aa899d5a2232ac1f9d7700b1aa3c5a08c8f6b4a0f84d5f09c3c88b797377c
+44	My Virtual Pet	math: close results	5ea2938a2cd1920fc5d5625cf157264861f9984288a6c20be60ca3a0405df9d5
+45	My Virtual Pet	math: close results	5ea2938a2cd1920fc5d5625cf157264861f9984288a6c20be60ca3a0405df9d5
 46	PetPal	minigame	db83d69745f7231daf07fe4b42ade538dc8899d84482239119d350b5facebf07
 47	PetPal	minigame: start	9686324c376964692a82de8ae1eb19bfdd2cf8d01356ad8c97a5eee2c9778ade
 48	PetPal	minigame: start	5b27feefb1e76e67c66c767e7ebf5eef99a33a130958e19b087a3215f8a0cb00
@@ -58,5 +58,5 @@
 57	PetPal	minigame: start	b01cf9c91623528a32f96c00dc28def6b7019364fef842630a98f218763b04ba
 58	PetPal	minigame: start	b01cf9c91623528a32f96c00dc28def6b7019364fef842630a98f218763b04ba
 59	PetPal	minigame: quit	b01cf9c91623528a32f96c00dc28def6b7019364fef842630a98f218763b04ba
-60	My Virtual Pet	minigame: quit	684aa899d5a2232ac1f9d7700b1aa3c5a08c8f6b4a0f84d5f09c3c88b797377c
+60	My Virtual Pet	minigame: quit	5ea2938a2cd1920fc5d5625cf157264861f9984288a6c20be60ca3a0405df9d5
 61	My Virtual Pet	minigame: quit	7cfdd1a798970972a757bf6030a41b2342e61078625a2154111c4c42aaecb24e

@@ -11,12 +11,12 @@ std::string pickQuote(Species species);
 
 struct Quote {
   std::string text;
-  sf::Clock sinceShown;
   bool visible = false;
+  sf::Clock sinceChange;  // since the quote last appeared or hid
 };
 
-// Picks a new quote every 10 s. `visible` is tracked but drawQuote never reads
-// it, so the quote never hides (known bug, phase 3).
+// Hidden for 10 s, then a new quote shows for 10 s, and so on.
 void updateQuote(Quote& quote, Species species);
 
-void drawQuote(sf::RenderTarget& target, const sf::Font& font, const std::string& text);
+// Draws nothing while the quote is hidden.
+void drawQuote(sf::RenderTarget& target, const sf::Font& font, const Quote& quote);

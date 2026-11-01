@@ -26,8 +26,8 @@ int main() {
   sf::RenderWindow window(sf::VideoMode(1920, 1080), "My Virtual Pet");
   window.setFramerateLimit(60);
 
-  // The quote timer runs from launch, so the first new quote lands 10 s after
-  // the menu appeared, not 10 s after the pet did.
+  // The quote timer runs from launch, so the first quote appears 10 s after the
+  // menu did, not 10 s after the pet did.
   Quote quote;
   const PetSpec* pet = nullptr;
   Stats stats;

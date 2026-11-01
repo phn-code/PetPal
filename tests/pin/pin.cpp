@@ -636,9 +636,20 @@ int logic(Recorder& rec) {
     pin::now() = sf::seconds(10);
     updateQuote(quote, Species::Avo);
     rec.check(quote.text == pickQuote(Species::Avo) && quote.visible, "new visible quote at 10 s");
+    std::string shown = quote.text;
     pin::now() = sf::seconds(19.875f);
     updateQuote(quote, Species::Avo);
-    rec.check(quote.visible, "known bug pinned: quote stays visible (never hides)");
+    rec.check(quote.visible && quote.text == shown, "quote shows for 10 s");
+    pin::now() = sf::seconds(20);
+    updateQuote(quote, Species::Avo);
+    rec.check(!quote.visible, "quote hides after 10 s");
+    pin::now() = sf::seconds(29.875f);
+    updateQuote(quote, Species::Avo);
+    rec.check(!quote.visible, "quote stays hidden for 10 s");
+    pin::now() = sf::seconds(30);
+    updateQuote(quote, Species::Avo);
+    rec.check(quote.visible && quote.text == pickQuote(Species::Avo),
+              "a new quote shows after 10 s hidden");
   }
   {
     mini_game g;
