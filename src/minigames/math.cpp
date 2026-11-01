@@ -56,7 +56,6 @@ int runMath(sf::Font& font) {
   std::srand(static_cast<unsigned>(std::time(nullptr)));
 
   sf::RenderWindow window(sf::VideoMode(1920, 1080), "Math Game");
-  window.display();
 
   sf::Font digits;
   digits.loadFromFile("assets/fonts/dogica.ttf");
