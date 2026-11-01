@@ -360,8 +360,10 @@ int journey(Recorder& rec, const std::string& pet) {
 int loadGame(Recorder& rec) {
   std::ofstream("pet_stats.txt") << "adult_ghost 0 0 0 0 42\n\nChicken 2\n";
   Script s(rec);
+  // Apples are out of stock, so trying one leaves the pet hungry.
   s.click(kMain, kMenuLoad.x, kMenuLoad.y, "menu: load")
       .click(kMain, kEat.x, kEat.y, "eat", 2)
+      .click("Eating Ghost Window", 1160, 340, "eat: apple")
       .key("Eating Ghost Window", sf::Keyboard::Escape, "eat: close")
       .close(kMain, "quit", kAfterAnimation);
   int code = petpal_main();

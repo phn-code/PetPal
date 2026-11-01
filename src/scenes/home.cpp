@@ -169,7 +169,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
           runActivity(window, font, art, pet, Activity::Medicine, quote, stats);
           break;
         case Button::Eat:
-          runFridge(pet, font, stats);
+          runFridge(pet, font, stats, pantry);
           runActivity(window, font, art, pet, Activity::Eat, quote, stats);
           break;
         case Button::Game: {

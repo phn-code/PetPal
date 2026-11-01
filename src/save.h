@@ -8,7 +8,7 @@
 #include "catalog.h"
 #include "stats.h"
 
-// Food name -> how many are in stock.
+// Food name -> how many are in stock. Foods that ran out have no entry.
 using Pantry = std::map<std::string, int>;
 
 // "<pet> <health> <sleep> <hunger> <iq> <money>", a blank line, then one

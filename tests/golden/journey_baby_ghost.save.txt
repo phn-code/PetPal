@@ -1,4 +1,3 @@
 baby_ghost 90 90 90 45 450
 
 Baby Medicine 1
-Baby Milk 1
