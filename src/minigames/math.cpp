@@ -143,7 +143,7 @@ void math_game::run() {
   // Display the final score after 5 questions
   std::cout << "You got " << correct_answers << " out of 5 correct!"
             << std::endl;
-  display_results();  // Show the results screen
+  if (game_window->isOpen()) display_results();
 }
 
 // Function to render the game elements
