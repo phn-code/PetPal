@@ -1,8 +1,8 @@
 0	My Virtual Pet	start	9caa57cf6d6333c9447c7cb639aaee20e6ad355518f6ca30c5b15c07ca28a212
 1	My Virtual Pet	menu: load	2c72ff8c45d3e0b2b9a0f4a3f6a57d3dbf7a4fc1b8749df283e4727f2cec8e52
 2	My Virtual Pet	menu: load	2c72ff8c45d3e0b2b9a0f4a3f6a57d3dbf7a4fc1b8749df283e4727f2cec8e52
-3	Eating Ghost Window	eat	7f75b48b6301cad8df7a7fb50424253092e1e7868b6fc60880cc01145322649d
-4	Eating Ghost Window	eat: close	7f75b48b6301cad8df7a7fb50424253092e1e7868b6fc60880cc01145322649d
+3	Eating Ghost Window	eat	f5025546c829bfa21b11fd2f07857cc393ece40b98bf5b3ebf63ac4b405873b3
+4	Eating Ghost Window	eat: close	f5025546c829bfa21b11fd2f07857cc393ece40b98bf5b3ebf63ac4b405873b3
 5	My Virtual Pet	eat: close	f0b4cfcb984a43349ed534e419739554bf55da398d3175e5bf13aefab70f5ef4
 6	My Virtual Pet	eat: close	f0b4cfcb984a43349ed534e419739554bf55da398d3175e5bf13aefab70f5ef4
 7	My Virtual Pet	eat: close	f0b4cfcb984a43349ed534e419739554bf55da398d3175e5bf13aefab70f5ef4

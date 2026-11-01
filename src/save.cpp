@@ -31,7 +31,7 @@ std::optional<SaveFile> readSave(const std::string& path) {
 }
 
 void writeSave(const std::string& path, const std::string& pet, const Stats& s,
-               const std::map<std::string, int>& pantry) {
+               const Pantry& pantry) {
   std::ofstream out(path);
   out << pet << " " << s.health << " " << s.sleep << " " << s.hunger << " " << s.iq << " "
       << s.money << "\n\n";

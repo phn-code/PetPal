@@ -20,7 +20,7 @@ FoodIcons loadFoodIcons(const std::vector<Food>& foods, const Grid& grid) {
   return icons;
 }
 
-int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket) {
+int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry) {
   const ShopLayout& layout = pet.shop;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
 
@@ -60,7 +60,7 @@ int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket) {
         const Food& food = pet.foods[i];
         if (coins >= food.price) {
           coins -= food.price;
-          basket[food.name]++;
+          pantry[food.name]++;
           trolleyCount++;
           coinsText.setString("Coins: " + std::to_string(coins));
           trolleyText.setString("Trolley: " + std::to_string(trolleyCount));

@@ -9,10 +9,8 @@
 
 #include "../catalog.h"
 #include "../quote.h"
+#include "../save.h"
 #include "../stats.h"
-
-// Food name -> count bought. Written to the save file after every home frame.
-using Basket = std::map<std::string, int>;
 
 // The pet's foods as 150 px icons placed on the grid. Textures stay put so
 // the sprites can point at them.
@@ -40,10 +38,10 @@ const PetSpec* runSelect(sf::RenderWindow& window, sf::Font& font);
 
 // The main loop: buttons, stats, quote, activities. Returns main()'s exit code.
 int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const PetSpec& pet,
-            Stats& stats, Quote& quote);
+            Stats& stats, Pantry& pantry, Quote& quote);
 
-// Returns the coins left after shopping.
-int runShop(const PetSpec& pet, sf::Font& font, int coins, Basket& basket);
+// Returns the coins left after shopping. Bought food goes into the pantry.
+int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry);
 
 // Eating from what the save file says was bought. Feeding fills hunger.
 void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats);

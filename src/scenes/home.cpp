@@ -130,7 +130,7 @@ void runActivity(sf::RenderWindow& window, sf::Font& font, const HomeArt& art,
 }  // namespace
 
 int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const PetSpec& pet,
-            Stats& stats, Quote& quote) {
+            Stats& stats, Pantry& pantry, Quote& quote) {
   HomeArt art;
   if (!art.load(pet)) std::cerr << "error loading sprites" << std::endl;
   sf::Music petSound;
@@ -138,7 +138,6 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     std::cerr << "Failed to load pet sound!" << std::endl;
   petSound.setVolume(100);
 
-  Basket basket;
   sf::Clock decayTimer;
   quote.text = pickQuote(pet.species);
 
@@ -192,7 +191,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
           break;
         }
         case Button::Shop:
-          stats.money = runShop(pet, font, stats.money, basket);
+          stats.money = runShop(pet, font, stats.money, pantry);
           break;
         case Button::Info:
           runInfo(font);
@@ -211,7 +210,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     window.draw(art.idle);
     drawWarnings(window, font, stats);
     window.display();
-    writeSave("pet_stats.txt", pet.name, stats, basket);
+    writeSave("pet_stats.txt", pet.name, stats, pantry);
   }
   return 0;
 }

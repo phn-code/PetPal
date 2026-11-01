@@ -358,7 +358,7 @@ int journey(Recorder& rec, const std::string& pet) {
 }
 
 int loadGame(Recorder& rec) {
-  std::ofstream("pet_stats.txt") << "adult_ghost 0 0 0 0 42\n\nSteak 2\n";
+  std::ofstream("pet_stats.txt") << "adult_ghost 0 0 0 0 42\n\nChicken 2\n";
   Script s(rec);
   s.click(kMain, kMenuLoad.x, kMenuLoad.y, "menu: load")
       .click(kMain, kEat.x, kEat.y, "eat", 2)

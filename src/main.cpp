@@ -31,6 +31,7 @@ int main() {
   Quote quote;
   const PetSpec* pet = nullptr;
   Stats stats;
+  Pantry pantry;
   std::optional<SaveFile> save = readSave("pet_stats.txt");
   MenuChoice choice = runMenu(window, font, save.has_value());
   if (choice == MenuChoice::Quit) return 0;
@@ -41,8 +42,7 @@ int main() {
   } else {
     pet = save->pet;
     stats = save->stats;
-    // Known bug (phase 3): save->pantry is not restored, so bought food is
-    // lost on load.
+    pantry = save->pantry;
   }
-  return runHome(window, font, music, *pet, stats, quote);
+  return runHome(window, font, music, *pet, stats, pantry, quote);
 }
