@@ -33,7 +33,7 @@ On a mismatch, `make pin` exits nonzero and names each failing frame with its ex
 
 - The start menu, including the "No Previous Games Found" message, and the pet picker.
 - For each of the four pets: the home screen, every frame of the sleep, shower, medicine and eating animations, the shop (buying items and running out of coins), the fridge (eating a stocked and an unstocked item), the info screen, a 30 s stat decay, and the save file.
-- Loading a save with all stats at 0, which shows the warnings, and trying to eat food that is out of stock.
+- Loading a save with all stats at 0, which shows the warnings, and trying to eat food that is out of stock, after which no eating animation plays and the home screen takes the next click.
 - The math game (intro, rules, five answers, results) and the box minigame (intro, every 25th frame of play, game over).
 - `logic`: `Stats` decay and caps; `readSave`; `findPet`; quote selection and `updateQuote`; minigame scoring by box height.
 - `math_odd_answers`: a lone "-", a double "-" and a twelve-digit answer never crash the math game, and the score counts only real answers.

@@ -44,7 +44,8 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
 // Returns the coins left after shopping. Bought food goes into the pantry.
 int runShop(const PetSpec& pet, sf::Font& font, int coins, Pantry& pantry);
 
-// Eating a food in stock takes one from the pantry and fills hunger.
-void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry);
+// Eating a food in stock takes one from the pantry and fills hunger. Returns
+// whether the pet ate anything before the fridge closed.
+bool runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry);
 
 void runInfo(sf::Font& font);

@@ -11,7 +11,7 @@ int inStock(const Pantry& pantry, const std::string& food) {
 
 }  // namespace
 
-void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry) {
+bool runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry) {
   const FridgeLayout& layout = pet.fridge;
   sf::RenderWindow window(sf::VideoMode(1920, 1080), layout.title);
 
@@ -33,6 +33,7 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
                                   "Quantity: " + std::to_string(inStock(pantry, pet.foods[i].name))));
   }
 
+  bool ate = false;
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -52,6 +53,7 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
           else
             pantry[food] = left;
           stats.hunger = 100;
+          ate = true;
           quantities[i].setString("Quantity: " + std::to_string(left));
         } else {
           message.setString("NEED TO BUY MORE");
@@ -68,4 +70,5 @@ void runFridge(const PetSpec& pet, sf::Font& font, Stats& stats, Pantry& pantry)
     }
     window.display();
   }
+  return ate;
 }

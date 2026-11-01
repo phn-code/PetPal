@@ -363,12 +363,16 @@ int journey(Recorder& rec, const std::string& pet) {
 int loadGame(Recorder& rec) {
   std::ofstream("pet_stats.txt") << "adult_ghost 0 0 0 0 42\n\nChicken 2\n";
   Script s(rec);
-  // Apples are out of stock, so trying one leaves the pet hungry.
+  // Apples are out of stock, so trying one leaves the pet hungry. Nothing was
+  // eaten, so no eating animation plays and the home screen takes the next
+  // click at once.
   s.click(kMain, kMenuLoad.x, kMenuLoad.y, "menu: load")
       .click(kMain, kEat.x, kEat.y, "eat", 2)
       .click("Eating Ghost Window", 1160, 340, "eat: apple")
       .key("Eating Ghost Window", sf::Keyboard::Escape, "eat: close")
-      .close(kMain, "quit", kAfterAnimation);
+      .click(kMain, kInfo.x, kInfo.y, "info", 2)
+      .key("Information", sf::Keyboard::B, "info: close")
+      .close(kMain, "quit", 2);
   int code = petpal_main();
   rec.check(code == 0, "main returned " + std::to_string(code));
   rec.check(s.done(), "script did not finish: the game stopped early");
