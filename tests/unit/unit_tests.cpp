@@ -71,6 +71,27 @@ void sheetPlayerEatingHalvesLaterFrames() {
         "frame " + std::to_string(eat.frame()));
 }
 
+// Every frame of every pet's sheets samples cells that lie inside the image.
+void sheetsFitTheirImages() {
+  for (Species species : {Species::Avo, Species::Ghost}) {
+    for (Stage stage : {Stage::Adult, Stage::Baby}) {
+      const PetSpec& pet = findPet(species, stage);
+      for (const Sheet& sheet : pet.sheets) {
+        sf::Image image;
+        image.loadFromFile(sheet.path);
+        int rows = (sheet.frames + sheet.cols - 1) / sheet.cols;
+        bool fits = sheet.cols * sheet.cellW <= static_cast<int>(image.getSize().x) &&
+                    rows * sheet.cellH <= static_cast<int>(image.getSize().y);
+        check(fits, std::string("[Sheet Fits Image - ") + sheet.path + "]",
+              std::to_string(sheet.cols) + "x" + std::to_string(rows) + " cells of " +
+                  std::to_string(sheet.cellW) + "x" + std::to_string(sheet.cellH) + " on a " +
+                  std::to_string(image.getSize().x) + "x" + std::to_string(image.getSize().y) +
+                  " image");
+      }
+    }
+  }
+}
+
 void quoteTests() {
   pin::now() = sf::Time::Zero;
   Quote quote;
@@ -140,6 +161,7 @@ int main() {
   statsTests();
   sheetPlayerAdvancesFrames();
   sheetPlayerEatingHalvesLaterFrames();
+  sheetsFitTheirImages();
   quoteTests();
   answerInputTests();
   readSaveTests();

@@ -27,9 +27,7 @@ const PetSpec kPets[] = {
     {"adult_avo", Species::Avo, Stage::Adult, "assets/pets/adult_avo/idle.png",
      {{"assets/pets/adult_avo/sleep.png", 32, 32, 4, 3, 0.8f},
       {"assets/pets/adult_avo/shower.png", 32, 32, 5, 5, 1.4f},
-      // The sheet is 32 px tall; the game has always sampled 36 and the pin
-      // keeps that stretch.
-      {"assets/pets/adult_avo/medicine.png", 32, 36, 2, 2, 1.4f},
+      {"assets/pets/adult_avo/medicine.png", 32, 32, 2, 2, 1.4f},
       {"assets/pets/adult_avo/eat.png", 32, 32, 3, 3, 1.4f}},
      kAdultAvoFoods,
      kAdultShop,
