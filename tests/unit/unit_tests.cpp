@@ -50,8 +50,21 @@ void statsTests() {
   s.decay();
   check(s.health == 0 && s.sleep == 0 && s.hunger == 0 && s.iq == 35, "[Test Decay Floor]");
   s.addIQ(5);
-  s.addIQ(6);
   check(s.iq == 60, "[Test Add IQ]", "got " + std::to_string(s.iq));
+  s.addIQ(6);
+  s.addIQ(-1);
+  check(s.iq == 60, "[Test Add IQ Ignores Scores Outside 0..5]", "got " + std::to_string(s.iq));
+  for (int i = 0; i < 3; ++i) s.addIQ(5);
+  check(s.iq == 100, "[Test IQ Caps At 100]", "got " + std::to_string(s.iq));
+}
+
+void findPetTests() {
+  const PetSpec* avo = findPet("baby_avo");
+  const PetSpec* ghost = findPet("adult_ghost");
+  check(avo && avo->species == Species::Avo && avo->stage == Stage::Baby, "[Find Pet - baby_avo]");
+  check(ghost && ghost->species == Species::Ghost && ghost->stage == Stage::Adult,
+        "[Find Pet - adult_ghost]");
+  check(findPet("cat") == nullptr, "[Find Pet - Unknown Name]");
 }
 
 void sheetPlayerAdvancesFrames() {
@@ -95,17 +108,49 @@ void sheetsFitTheirImages() {
   }
 }
 
-void quoteTests() {
+// Hidden for the first 10 s, then a quote shows for 10 s, hides for 10 s,
+// and a new one shows.
+void quoteCycleTests() {
   pin::now() = sf::Time::Zero;
   Quote quote;
-  pin::now() += sf::seconds(10.1f);
+  pin::now() = sf::seconds(9.875f);
   updateQuote(quote, Species::Avo);
-  check(quote.visible && !quote.text.empty(), "[Avo Test - Update Quote]");
+  check(!quote.visible, "[Quote - Hidden Before 10 s]");
+  pin::now() = sf::seconds(10);
   updateQuote(quote, Species::Avo);
-  pin::now() += sf::seconds(10.f);
+  check(quote.visible && !quote.text.empty(), "[Quote - Shows At 10 s]");
+  const std::string shown = quote.text;
+  pin::now() = sf::seconds(19.875f);
   updateQuote(quote, Species::Avo);
-  check(!quote.visible, "[Avo Test - Quote Visibility]",
-        "expected the quote to hide after its display duration");
+  check(quote.visible && quote.text == shown, "[Quote - Stays 10 s]");
+  pin::now() = sf::seconds(20);
+  updateQuote(quote, Species::Avo);
+  check(!quote.visible, "[Quote - Hides After 10 s]");
+  pin::now() = sf::seconds(29.875f);
+  updateQuote(quote, Species::Avo);
+  check(!quote.visible, "[Quote - Stays Hidden 10 s]");
+  pin::now() = sf::seconds(30);
+  updateQuote(quote, Species::Avo);
+  check(quote.visible, "[Quote - Shows Again After 10 s Hidden]");
+}
+
+// Each species says one of its own quotes, the same one all through a
+// wall-clock second.
+void quotePickTests() {
+  for (Species species : {Species::Avo, Species::Ghost}) {
+    const std::vector<std::string>& own = quotesFor(species);
+    bool ownQuotes = true, steady = true;
+    for (int second = 0; second < 8; ++second) {
+      pin::now() = sf::seconds(static_cast<float>(second));
+      std::string first = pickQuote(species);
+      pin::now() += sf::seconds(0.875f);
+      steady = steady && pickQuote(species) == first;
+      ownQuotes = ownQuotes && std::find(own.begin(), own.end(), first) != own.end();
+    }
+    const std::string name = species == Species::Avo ? "Avo" : "Ghost";
+    check(ownQuotes, "[Quote - " + name + " Says Its Own Quotes]");
+    check(steady, "[Quote - " + name + " Keeps One Quote Per Second]");
+  }
 }
 
 std::string typed(const std::string& keys) {
@@ -144,6 +189,14 @@ std::string readSaveOf(const std::string& text) {
 void readSaveTests() {
   const std::string good = "adult_ghost 1 2 3 4 5\n\nChicken 2\nBaby Milk 1\n";
   check(readSaveOf(good) == "ok", "[Save - Well Formed]", readSaveOf(good));
+  std::optional<SaveFile> save = readSave("build/unit_save.txt");
+  check(save && std::string(save->pet->name) == "adult_ghost" && save->stats.health == 1 &&
+            save->stats.sleep == 2 && save->stats.hunger == 3 && save->stats.iq == 4 &&
+            save->stats.money == 5,
+        "[Save - Reads The Pet And Its Stats]");
+  check(save && save->pantry == Pantry{{"Chicken", 2}, {"Baby Milk", 1}},
+        "[Save - Reads The Pantry]");
+  check(!readSave("build/no_such_save.txt"), "[Save - Missing File Is No Save]");
   const std::pair<const char*, const char*> malformed[] = {
       {"", "[Save - Empty File Is No Save]"},
       {"adult_ghost 1 2\n", "[Save - Short Stats Line Is No Save]"},
@@ -239,7 +292,9 @@ int main() {
   sheetPlayerAdvancesFrames();
   sheetPlayerEatingHalvesLaterFrames();
   sheetsFitTheirImages();
-  quoteTests();
+  quoteCycleTests();
+  quotePickTests();
+  findPetTests();
   answerInputTests();
   quoteDrawsItsCharacters();
   readSaveTests();

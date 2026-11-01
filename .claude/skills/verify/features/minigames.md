@@ -19,7 +19,7 @@ Preconditions: a new game started with `startNewGame`.
 
 - **Math answers.** Call `mathAnswers()` in the action that clicks `kMath`. It replays the game's `rand()` seed and returns the five right answers. Type one with `typeKeys(answer)`. See `games`.
 - **Box game.** `.then("PetPal", 1, "minigame: start", ...)` pushes Enter. Set `s.sampleEvery = 25` while boxes fall to keep the golden small.
-- **Proof.** `games`, `math_odd_answers`, and `math_escape_intro`. `logic` checks box scoring by height.
+- **Proof.** `games`, `math_odd_answers`, and `math_escape_intro`. The unit tests check box points by height through `pointsFor()`.
 
 ## Gotchas
 

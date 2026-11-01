@@ -5,17 +5,13 @@
 // (rewrite the manifests instead of comparing), PIN_DUMP (absolute dir; also
 // save every displayed frame there as <hash prefix>.png).
 
-// Test-only access to private members (mini_game scoring), so the pin needs
-// no change to production code.
 #include <CommonCrypto/CommonDigest.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define private public
 #define main petpal_main
 #include "../../src/main.cpp"
 #undef main
-#undef private
 
 namespace {
 
@@ -682,94 +678,8 @@ int mathEscapeIntro(Recorder& rec) {
   return rec.finish();
 }
 
-int logic(Recorder& rec) {
-  auto show = [](const Stats& s) {
-    return std::to_string(s.health) + "/" + std::to_string(s.sleep) + "/" +
-           std::to_string(s.hunger) + "/" + std::to_string(s.iq) + "/" + std::to_string(s.money);
-  };
-  auto expectEq = [&rec](const std::string& got, const std::string& want,
-                         const std::string& what) {
-    rec.check(got == want, what + ": got \"" + got + "\", want \"" + want + "\"");
-  };
-
-  {
-    Stats s;
-    expectEq(show(s), "25/25/25/50/1000", "new pet stats");
-    s.decay();
-    expectEq(show(s), "15/15/15/45/1000", "decay: -10 each, IQ -5");
-    s.decay();
-    s.decay();
-    expectEq(show(s), "0/0/0/35/1000", "decay floors at 0");
-    s.addIQ(5);
-    expectEq(std::to_string(s.iq), "60", "addIQ adds 5 per point");
-    s.addIQ(6);
-    s.addIQ(-1);
-    expectEq(std::to_string(s.iq), "60", "addIQ ignores scores outside 0..5");
-    s.addIQ(5);
-    s.addIQ(5);
-    s.addIQ(5);
-    expectEq(std::to_string(s.iq), "100", "IQ caps at 100");
-  }
-  {
-    std::ofstream("pin_read.txt") << "baby_ghost 1 2 3 4 5\n\nSteak 2\n";
-    std::optional<SaveFile> save = readSave("pin_read.txt");
-    rec.check(save.has_value(), "readSave reads a well-formed file");
-    if (save) {
-      expectEq(std::string(save->pet->name) + " " + show(save->stats), "baby_ghost 1/2/3/4/5",
-               "readSave reads the pet and the five numbers");
-      expectEq(std::to_string(save->pantry.size()) + ":" + std::to_string(save->pantry["Steak"]),
-               "1:2", "readSave reads the pantry lines");
-    }
-    rec.check(!readSave("no_such_file.txt"), "readSave on a missing file is empty");
-    std::remove("pin_read.txt");
-  }
-  {
-    const PetSpec* a = findPet("baby_avo");
-    const PetSpec* g = findPet("adult_ghost");
-    rec.check(a && a->species == Species::Avo && a->stage == Stage::Baby, "findPet(baby_avo)");
-    rec.check(g && g->species == Species::Ghost && g->stage == Stage::Adult,
-              "findPet(adult_ghost)");
-    rec.check(findPet("cat") == nullptr, "unknown pet names have no spec");
-  }
-  {
-    // Quotes are picked by srand(time(0)); rand(), so the pick is a function of
-    // the wall-clock second.
-    std::string picks;
-    for (int s = 0; s < 4; ++s) {
-      pin::now() = sf::seconds(static_cast<float>(s));
-      picks += pickQuote(Species::Avo) + "|" + pickQuote(Species::Ghost) + "\n";
-    }
-    rec.checkText("quotes.txt", picks);
-
-    pin::now() = sf::Time::Zero;
-    Quote quote;
-    quote.text = "first";
-    pin::now() = sf::seconds(9.875f);
-    updateQuote(quote, Species::Avo);
-    rec.check(quote.text == "first" && !quote.visible, "quote kept before 10 s");
-    pin::now() = sf::seconds(10);
-    updateQuote(quote, Species::Avo);
-    rec.check(quote.text == pickQuote(Species::Avo) && quote.visible, "new visible quote at 10 s");
-    std::string shown = quote.text;
-    pin::now() = sf::seconds(19.875f);
-    updateQuote(quote, Species::Avo);
-    rec.check(quote.visible && quote.text == shown, "quote shows for 10 s");
-    pin::now() = sf::seconds(20);
-    updateQuote(quote, Species::Avo);
-    rec.check(!quote.visible, "quote hides after 10 s");
-    pin::now() = sf::seconds(29.875f);
-    updateQuote(quote, Species::Avo);
-    rec.check(!quote.visible, "quote stays hidden for 10 s");
-    pin::now() = sf::seconds(30);
-    updateQuote(quote, Species::Avo);
-    rec.check(quote.visible && quote.text == pickQuote(Species::Avo),
-              "a new quote shows after 10 s hidden");
-  }
-  return rec.finish();
-}
-
 const std::vector<std::string> kScenarios = {
-    "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
+    "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
     "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "save_retry", "close_during_shop", "small_screen",
     "math_odd_answers", "math_escape_intro"};
 
@@ -789,7 +699,6 @@ int main(int argc, char** argv) {
   std::cout.rdbuf(nullptr);
   Recorder rec(name);
   try {
-    if (name == "logic") return logic(rec);
     if (name.rfind("journey_", 0) == 0) return journey(rec, name.substr(8));
     if (name == "load_game") return loadGame(rec);
     if (name == "games") return games(rec);
