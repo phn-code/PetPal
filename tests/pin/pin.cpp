@@ -8,6 +8,7 @@
 // Test-only access to private members (mini_game scoring), so the pin needs
 // no change to production code.
 #include <CommonCrypto/CommonDigest.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #define private public
@@ -480,6 +481,30 @@ int saveWrites(Recorder& rec) {
   return rec.finish();
 }
 
+// A save that fails to write is tried again on the next frame, not only once
+// the pet's stats next change. A non-empty directory where the temporary file
+// goes makes every write fail until the scenario removes it.
+int saveRetry(Recorder& rec) {
+  mkdir("pet_stats.txt.tmp", 0755);
+  std::ofstream("pet_stats.txt.tmp/block") << "x";
+  Script s(rec);
+  s.capturing = false;
+  startNewGame(s, kIntroAvo, kIntroBaby);
+  s.then(kMain, 3, "idle: unblock the save", [&rec] {
+     rec.check(!std::ifstream("pet_stats.txt"), "a save was written through a blocked temp file");
+     std::remove("pet_stats.txt.tmp/block");
+     std::remove("pet_stats.txt.tmp");
+   })
+      .then(kMain, 2, "idle: save written", [&rec] {
+        rec.check(readSave("pet_stats.txt").has_value(), "the failed save was not tried again");
+      })
+      .close(kMain, "quit", 2);
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: the game stopped early");
+  return rec.finish();
+}
+
 // On a screen too small for 1920x1080, as on a 13-inch MacBook, every window
 // opens at 1470x802. The scene scales by 802/1080 on both axes to 1426x802 and
 // sits centred, with black bars 22 px wide at the left and right. Clicks land
@@ -755,7 +780,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "small_screen",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "save_retry", "small_screen",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -781,6 +806,7 @@ int main(int argc, char** argv) {
     if (name == "close_quits") return closeQuits(rec);
     if (name == "bad_save") return badSave(rec);
     if (name == "save_writes") return saveWrites(rec);
+    if (name == "save_retry") return saveRetry(rec);
     if (name == "small_screen") return smallScreen(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);

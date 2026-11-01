@@ -40,15 +40,13 @@ std::string formatSave(const PetSpec& pet, const Stats& s, const Pantry& pantry)
   return out.str();
 }
 
-void writeSave(const std::string& path, const std::string& text) {
+bool writeSave(const std::string& path, const std::string& text) {
   const std::string temp = path + ".tmp";
   std::ofstream out(temp);
   out << text;
   out.close();
-  if (!out) {
-    std::cerr << "Could not write " << temp << "; the previous save is kept" << std::endl;
-    std::remove(temp.c_str());
-    return;
-  }
-  std::rename(temp.c_str(), path.c_str());
+  if (out && std::rename(temp.c_str(), path.c_str()) == 0) return true;
+  std::cerr << "Could not write " << path << "; the previous save is kept" << std::endl;
+  std::remove(temp.c_str());
+  return false;
 }

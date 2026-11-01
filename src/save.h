@@ -26,5 +26,5 @@ std::optional<SaveFile> readSave(const std::string& path);
 std::string formatSave(const PetSpec& pet, const Stats& stats, const Pantry& pantry);
 
 // Writes a temporary file and renames it over `path`, so a crash mid-write
-// leaves the previous save intact.
-void writeSave(const std::string& path, const std::string& text);
+// leaves the previous save intact. False when the save was not replaced.
+bool writeSave(const std::string& path, const std::string& text);

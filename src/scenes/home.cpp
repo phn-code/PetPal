@@ -211,10 +211,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     drawWarnings(window, font, stats);
     window.display();
     std::string save = formatSave(pet, stats, pantry);
-    if (save != written) {
-      writeSave("pet_stats.txt", save);
-      written = save;
-    }
+    if (save != written && writeSave("pet_stats.txt", save)) written = save;
   }
   return 0;
 }

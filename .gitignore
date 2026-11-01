@@ -34,4 +34,5 @@
 # Build output and the save file the game writes to the working directory
 build/
 pet_stats.txt
+pet_stats.txt.tmp
 .DS_Store
