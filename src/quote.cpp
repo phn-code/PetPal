@@ -49,7 +49,7 @@ void updateQuote(Quote& quote, Species species) {
 
 void drawQuote(sf::RenderTarget& target, const sf::Font& font, const Quote& quote) {
   if (!quote.visible) return;
-  sf::Text quoteText(quote.text, font, 39);
+  sf::Text quoteText(sf::String::fromUtf8(quote.text.begin(), quote.text.end()), font, 39);
   quoteText.setFillColor(sf::Color::Black);
   sf::FloatRect bounds = quoteText.getLocalBounds();
   quoteText.setOrigin(bounds.left + bounds.width / 2, 0);

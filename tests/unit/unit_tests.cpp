@@ -1,6 +1,7 @@
 // Logic checks that need no window. Built with tests/pin/shim.h force-included,
 // so sf::Clock reads the fake clock (pin::now()) and nothing opens on screen.
 #include <fstream>
+#include <algorithm>
 #include <iostream>
 #include <set>
 #include <string>
@@ -147,6 +148,55 @@ void readSaveTests() {
   for (const auto& [text, name] : malformed) check(readSaveOf(text) == "none", name, readSaveOf(text));
 }
 
+// The drawn pixels inside the bounding box of everything not background, as
+// "<w>x<h>:<rgba bytes>", so two drawings compare regardless of position.
+std::string ink(const sf::RenderTexture& target, sf::Color background) {
+  sf::Image img = target.getTexture().copyToImage();
+  unsigned left = img.getSize().x, top = img.getSize().y, right = 0, bottom = 0;
+  for (unsigned y = 0; y < img.getSize().y; ++y)
+    for (unsigned x = 0; x < img.getSize().x; ++x)
+      if (img.getPixel(x, y) != background) {
+        left = std::min(left, x), right = std::max(right, x + 1);
+        top = std::min(top, y), bottom = std::max(bottom, y + 1);
+      }
+  if (right == 0) return "nothing";
+  std::string out = std::to_string(right - left) + "x" + std::to_string(bottom - top) + ":";
+  for (unsigned y = top; y < bottom; ++y)
+    for (unsigned x = left; x < right; ++x) {
+      sf::Color c = img.getPixel(x, y);
+      out += {static_cast<char>(c.r), static_cast<char>(c.g), static_cast<char>(c.b),
+              static_cast<char>(c.a)};
+    }
+  return out;
+}
+
+void quoteDrawsItsCharacters() {
+  sf::Font font;
+  font.loadFromFile("assets/fonts/Regular.ttf");
+  const sf::Color background(230, 230, 220);
+  sf::RenderTexture drawn, wanted;
+  drawn.create(1920, 400);
+  wanted.create(1920, 400);
+
+  Quote quote;
+  quote.text = "I\u2019m here\u2014boo";  // UTF-8, as the quote list stores it
+  quote.visible = true;
+  drawn.clear(background);
+  drawQuote(drawn, font, quote);
+  drawn.display();
+
+  sf::Text text(sf::String(L"I\u2019m here\u2014boo"), font, 39);
+  text.setFillColor(sf::Color::Black);
+  text.setPosition(100, 100);
+  wanted.clear(background);
+  wanted.draw(text);
+  wanted.display();
+
+  std::string got = ink(drawn, background), want = ink(wanted, background);
+  check(got == want, "[Quote Draws Curly Apostrophe And Dash]",
+        "drew " + got.substr(0, got.find(':')) + ", wanted " + want.substr(0, want.find(':')));
+}
+
 }  // namespace
 
 int main() {
@@ -158,6 +208,7 @@ int main() {
   sheetsFitTheirImages();
   quoteTests();
   answerInputTests();
+  quoteDrawsItsCharacters();
   readSaveTests();
 
   for (const std::string& name : failures) std::cout << "FAIL " << name << std::endl;
