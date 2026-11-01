@@ -139,6 +139,10 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
   petSound.setVolume(100);
 
   std::string written;  // the save file's text as last written
+  auto save = [&] {
+    std::string text = formatSave(pet, stats, pantry);
+    if (text != written && writeSave("pet_stats.txt", text)) written = text;
+  };
   sf::Clock decayTimer;
 
   while (window.isOpen()) {
@@ -151,6 +155,9 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     sf::Event event;
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
+        // A shop or game that was open when this window closed has changed
+        // the stats since the last frame saved them.
+        save();
         window.close();
         return 0;
       }
@@ -210,8 +217,7 @@ int runHome(sf::RenderWindow& window, sf::Font& font, sf::Music& music, const Pe
     window.draw(art.idle);
     drawWarnings(window, font, stats);
     window.display();
-    std::string save = formatSave(pet, stats, pantry);
-    if (save != written && writeSave("pet_stats.txt", save)) written = save;
+    save();
   }
   return 0;
 }

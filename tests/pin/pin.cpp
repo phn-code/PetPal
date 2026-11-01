@@ -505,6 +505,31 @@ int saveRetry(Recorder& rec) {
   return rec.finish();
 }
 
+// Closing the home window while the shop is open quits once the shop closes,
+// and the save keeps what was bought. The pin has one event queue, so the
+// shop's close and the home window's close are queued together: the shop
+// takes the first and the home screen finds the second when the shop returns.
+int closeDuringShop(Recorder& rec) {
+  Script s(rec);
+  s.capturing = false;
+  startNewGame(s, kIntroAvo, kIntroAdult);
+  s.click(kMain, kShop.x, kShop.y, "shop", 2)
+      .click("Adult Avo Shopping", 398, 203, "shop: buy steak")
+      .then("Adult Avo Shopping", 1, "close the shop and the home window", [] {
+        sf::Event e;
+        e.type = sf::Event::Closed;
+        pin::events().push_back(e);
+        pin::events().push_back(e);
+      });
+  int code = petpal_main();
+  rec.check(code == 0, "main returned " + std::to_string(code));
+  rec.check(s.done(), "script did not finish: the game stopped early");
+  std::optional<SaveFile> save = readSave("pet_stats.txt");
+  rec.check(save && save->stats.money == 500 && save->pantry["Steak"] == 1,
+            "the save lost the steak: " + readFile("pet_stats.txt"));
+  return rec.finish();
+}
+
 // On a screen too small for 1920x1080, as on a 13-inch MacBook, every window
 // opens at 1470x802. The scene scales by 802/1080 on both axes to 1426x802 and
 // sits centred, with black bars 22 px wide at the left and right. Clicks land
@@ -780,7 +805,7 @@ int logic(Recorder& rec) {
 
 const std::vector<std::string> kScenarios = {
     "logic",          "journey_adult_avo", "journey_baby_avo", "journey_adult_ghost",
-    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "save_retry", "small_screen",
+    "journey_baby_ghost", "load_game",     "games",            "close_quits", "bad_save", "save_writes", "save_retry", "close_during_shop", "small_screen",
     "math_odd_answers", "math_escape_intro"};
 
 }  // namespace
@@ -807,6 +832,7 @@ int main(int argc, char** argv) {
     if (name == "bad_save") return badSave(rec);
     if (name == "save_writes") return saveWrites(rec);
     if (name == "save_retry") return saveRetry(rec);
+    if (name == "close_during_shop") return closeDuringShop(rec);
     if (name == "small_screen") return smallScreen(rec);
     if (name == "math_odd_answers") return mathOddAnswers(rec);
     if (name == "math_escape_intro") return mathEscapeIntro(rec);
