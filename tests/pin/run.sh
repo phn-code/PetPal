@@ -19,7 +19,7 @@ for scenario in $("$bin" --list); do
   mkdir "$dir"
   for f in "$root"/* "$root"/.[!.]*; do
     case "$(basename "$f")" in
-      build | tests | .git | pet_stats.txt) ;;
+      build | tests | .git | pet_stats.txt*) ;;
       *) [ -e "$f" ] && ln -s "$f" "$dir/" ;;
     esac
   done
